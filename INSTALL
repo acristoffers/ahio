@@ -1,0 +1,5 @@
+Simply run `python3 setup.py install`. It should install all dependencies.
+
+To generate documentation, install doxypy using pip3: `pip3 install doxypy` and
+use doxygen to generate the files: `doxygen Doxyfile`. The generated
+documentation will be placed in "doc" folder.
