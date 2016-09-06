@@ -18,6 +18,12 @@ class Driver(loki.abstract_driver.AbstractDriver):
 
     AnalogReferences = Enum('AnalogReferences', 'Default Internal External')
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
+
     def setup(self, port):
         """Connects to an Arduino UNO on serial port `port`.
 
@@ -124,9 +130,9 @@ class Driver(loki.abstract_driver.AbstractDriver):
                         'Value should be a float or int between 0 and 1')
             else:
                 if type(value) == loki.LogicValue:
-                    direction = 1 if value == loki.LogicValue.High else 0
+                    value = 1 if value == loki.LogicValue.High else 0
                     command = b'\x02\xC7' + bytes({pin.value - 1})
-                    arg = bytes({direction})
+                    arg = bytes({value})
                     self._serial.write(command + arg)
                 else:
                     raise TypeError('Value should be of type loki.LogicValue')
