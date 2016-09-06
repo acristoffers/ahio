@@ -42,10 +42,10 @@ class Driver(loki.abstract_driver.AbstractDriver):
     def __clamp(self, value, min, max):
         return sorted((min, value, max))[1]
 
-    def __create_pin_info(self, id, pwm=False):
-        is_analog = id.name.startswith('A')
+    def __create_pin_info(self, pid, pwm=False):
+        is_analog = pid.name.startswith('A')
         obj = {
-            'id': id,
+            'id': pid,
             'name': None,
             'analog': {
                 'input': is_analog,
@@ -60,9 +60,9 @@ class Driver(loki.abstract_driver.AbstractDriver):
             }
         }
         if is_analog:
-            obj['name'] = 'Analog %s' % (id.value - 14)
+            obj['name'] = 'Analog %s' % (pid.value - 14)
         else:
-            obj['name'] = 'Digital %s' % (id.value - 1)
+            obj['name'] = 'Digital %s' % (pid.value - 1)
         return obj
 
     def available_pins(self):
