@@ -29,7 +29,7 @@ arduino = loki.new_driver('Arduino')
 arduino.setup('/dev/tty.usbmodem1421')
 
 # Map the pins. From now on, when you use 1 in the API, it will have effects
-# on pin D2 in the Arduino. If you change hardware in the future, just change
+# on pin D3 in the Arduino. If you change hardware in the future, just change
 # the mapping.
 arduino.map_pin(1, arduino.Pins.D3)
 arduino.map_pin(2, arduino.Pins.D13)
