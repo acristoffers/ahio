@@ -75,7 +75,7 @@ class AbstractDriver(object):
         know about this. The other functions will translate the mapped pin to
         your id before calling your function.
 
-        @arg abstract_pin_number the id that will identify this pin in the
+        @arg abstract_pin_id the id that will identify this pin in the
         other function calls. You can choose what you want.
 
         @arg physical_pin_id the id returned in the driver.
