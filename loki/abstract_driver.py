@@ -30,6 +30,7 @@ class AbstractDriver(object):
     """
 
     _pin_mapping = {}
+    _pin_lin = {}
 
     def available_pins(self):
         """Returns available pins.
@@ -86,6 +87,54 @@ class AbstractDriver(object):
             self._pin_mapping[abstract_pin_id] = physical_pin_id
         else:
             self._pin_mapping.pop(abstract_pin_id, None)
+
+    def _linear_interpolation(self, x, imin, imax, omin, omax):
+        return (imax * omin - imin * omax + x * (omax - omin)) / (imax - imin)
+
+    def set_linearize_values_for_pin(self, pin, read_min, read_max, write_min, write_max):
+        """Interpolates input and output values for `pin`.
+
+        Changes the output and input of `AbstractDriver.read` and
+        `AbstractDriver.write` functions to use a value in range
+        (`read_min`, `read_max`) or (`write_min`, `write_max`) instead of the
+        values returned by `available_pins` (analog only). The conversion is
+        done using linear interpolation. If `read_min`, `read_max`, `write_min`
+        and `write_max` are all None or don't form valid pairs (like, read_min
+        has a value but read_max is None), the pin is deregistered. If you pass
+        a pair but leave the other with None values, only one direction is
+        registered.
+
+        @arg pin pin id you've set using `AbstractDriver.map_pin`
+        @arg read_min the min value for the linear interpolation of
+             `AbstractDriver.read`.
+        @arg read_max the max value for the linear interpolation of
+             `AbstractDriver.read`.
+        @arg write_min the min value for the linear interpolation of
+             `AbstractDriver.write`.
+        @arg write_max the max value for the linear interpolation of
+             `AbstractDriver.write`.
+        """
+        valid_read = (read_min != None and read_max != None)
+        valid_write = (write_min != None and write_max != None)
+
+        if not valid_read and not valid_write:
+            self._pin_lin.pop(pin, None)
+            return None
+
+        if type(pin) == list:
+            for p in pin:
+                self.linearize_values_for_pin(
+                    p, read_min, read_max, write_min, write_max)
+            return None
+
+        pin_id = self._pin_mapping.get(pin, None)
+        pins = [pin for pin in self.available_pins() if pin_id == pin['id']]
+        read = pins[0]['analog']['read_range']
+        write = pins[0]['analog']['write_range']
+        self._pin_lin[pin] = {
+            'read': (*read, read_min, read_max) if valid_read and read else None,
+            'write': (write_min, write_max, *write) if valid_write and write else None
+        }
 
     def set_pin_direction(self, pin, direction):
         """Sets pin `pin` to `direction`.
@@ -210,6 +259,11 @@ class AbstractDriver(object):
 
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
+            lpin = self._pin_lin.get(pin, None)
+            if lpin:
+                if lpin['write']:
+                    write_range = lpin['write']
+                    value = self._linear_interpolation(value, *write_range)
             self._write(pin_id, value, pwm)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
@@ -232,7 +286,13 @@ class AbstractDriver(object):
             return [self.read(p) for p in pin]
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
-            return self._read(pin_id)
+            value = self._read(pin_id)
+            lpin = self._pin_lin.get(pin, None)
+            if lpin:
+                if lpin['read']:
+                    read_range = lpin['read']
+                    value = self._linear_interpolation(value, *read_range)
+            return value
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
 
