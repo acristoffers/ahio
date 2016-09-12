@@ -114,17 +114,17 @@ class AbstractDriver(object):
         @arg write_max the max value for the linear interpolation of
              `AbstractDriver.write`.
         """
+        if type(pin) == list:
+            for p in pin:
+                self.set_linearize_values_for_pin(
+                    p, read_min, read_max, write_min, write_max)
+            return None
+
         valid_read = (read_min != None and read_max != None)
         valid_write = (write_min != None and write_max != None)
 
         if not valid_read and not valid_write:
             self._pin_lin.pop(pin, None)
-            return None
-
-        if type(pin) == list:
-            for p in pin:
-                self.linearize_values_for_pin(
-                    p, read_min, read_max, write_min, write_max)
             return None
 
         pin_id = self._pin_mapping.get(pin, None)
