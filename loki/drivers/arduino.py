@@ -14,7 +14,8 @@ class Driver(loki.abstract_driver.AbstractDriver):
     _serial = None
 
     Pins = Enum(
-        'Pins', 'D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 A1 A2 A3 A4 A5')
+        'Pins',
+        'D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 A1 A2 A3 A4 A5')
 
     AnalogReferences = Enum('AnalogReferences', 'Default Internal External')
 
@@ -111,25 +112,25 @@ class Driver(loki.abstract_driver.AbstractDriver):
             raise RuntimeError('Digtal pin can not be set as analog')
 
     def _pin_type(self, pin):
-        return loki.PortType.Analog if pin.name.startswith('A') else loki.PortType.Digital
+        pt = loki.PortType
+        return pt.Analog if pin.name.startswith('A') else pt.Digital
 
     def _write(self, pin, value, pwm):
         if self._pin_direction(pin) == loki.Direction.Input:
-            return None
+            return
         if pin.name.startswith('D'):
             if pwm:
                 if (pin.value - 1) not in [3, 5, 6, 9, 10, 11]:
                     raise RuntimeError('Pin does not support PWM output')
-                if type(value) == int or type(value) == float:
+                if type(value) is int or type(value) is float:
                     value = int(255 * self.__clamp(float(value), 0.0, 1.0))
                     command = b'\x02\xC8' + bytes({pin.value - 1})
                     arg = bytes({value})
                     self._serial.write(command + arg)
                 else:
-                    raise TypeError(
-                        'Value should be a float or int between 0 and 1')
+                    raise TypeError('value not a float or int between 0 and 1')
             else:
-                if type(value) == loki.LogicValue:
+                if type(value) is loki.LogicValue:
                     value = 1 if value == loki.LogicValue.High else 0
                     command = b'\x02\xC7' + bytes({pin.value - 1})
                     arg = bytes({value})
@@ -143,7 +144,8 @@ class Driver(loki.abstract_driver.AbstractDriver):
         if pin.name.startswith('D'):
             self._serial.write(b'\x02\xC5' + bytes({pin.value - 1}))
             value = self._serial.read()
-            return loki.LogicValue.High if value == b'\x01' else loki.LogicValue.Low
+            lv = loki.LogicValue
+            return lv.High if value == b'\x01' else lv.Low
         else:
             self._serial.write(b'\x02\xC6' + bytes({pin.value - 14}))
             value_high = self._serial.read()
@@ -154,7 +156,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
         return [r for r in Driver.AnalogReferences]
 
     def _set_analog_reference(self, reference, pin):
-        if pin != None:
+        if pin is not None:
             raise RuntimeError('Per pin analog reference is not supported')
         self._serial.write(b'\x02\xC2' + bytes({reference.value - 1}))
 

@@ -40,7 +40,7 @@ def pi_version():
 
 class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
     NAME = 'Raspberry'
-    AVAILABLE = pi_version() != None
+    AVAILABLE = pi_version() is not None
 
 # Just try to import it. Code that depends on it should not be executed outside
 # of Raspberry Pi anyway
@@ -48,17 +48,18 @@ try:
     import RPi.GPIO as GPIO
 except ImportError:
     if LokiDriverInfo.AVAILABLE:
-        print("You should install RPi.GPIO: sudo apt-get install python3-rpi.gpio")
+        print("RPi.GPIO not installed: sudo apt-get install python3-rpi.gpio")
         LokiDriverInfo.AVAILABLE = false
 except RuntimeError:
     LokiDriverInfo.AVAILABLE = false
-    print("You probably need superuser privileges. Don't forget to run with sudo")
+    print("You probably need superuser privileges. Try running with sudo")
 
 
 class Driver(loki.abstract_driver.AbstractDriver):
 
     Pins = Enum(
-        'Pins', 'D3 D5 D7 D8 D10 D12 D13 D15 D16 D18 D19 D21 D22 D23 D24 D26')
+        'Pins',
+        'D3 D5 D7 D8 D10 D12 D13 D15 D16 D18 D19 D21 D22 D23 D24 D26')
 
     __pwm = {}
     __pwm_frequency = {}
@@ -93,7 +94,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
         }
 
     def __pin_to_int(self, pin):
-        if type(pin) == int:
+        if type(pin) is int:
             return pin
         else:
             return int(pin.name.replace('D', ''))
@@ -125,7 +126,8 @@ class Driver(loki.abstract_driver.AbstractDriver):
             return None
 
     def _set_pin_type(self, pin, ptype):
-        raise RuntimeError('Raspberry Pi pins can only be used as Digital')
+        if ptype != loki.PortType.Digital:
+            raise RuntimeError('Raspberry Pi pins can only be used as Digital')
 
     def _pin_type(self, pin):
         return loki.PortType.Digital
@@ -135,7 +137,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
         if self._pin_direction(pin) == loki.Direction.Input:
             return None
         if pwm:
-            if type(value) == int or type(value) == float:
+            if type(value) is int or type(value) is float:
                 value = int(100 * self.__clamp(float(value), 0.0, 1.0))
                 p = self.__pwm.get(pin, None)
                 if not p:
@@ -148,8 +150,9 @@ class Driver(loki.abstract_driver.AbstractDriver):
                 raise TypeError(
                     'Value should be a float or int between 0 and 1')
         else:
-            if type(value) == loki.LogicValue:
-                value = GPIO.HIGH if value == loki.LogicValue.High else GPIO.LOW
+            if type(value) is loki.LogicValue:
+                lv = loki.LogicValue
+                value = GPIO.HIGH if value == lv.High else GPIO.LOW
                 GPIO.output(pin, value)
             else:
                 raise TypeError('Value should be of type loki.LogicValue')
@@ -177,4 +180,3 @@ class Driver(loki.abstract_driver.AbstractDriver):
         else:
             for pin in Driver.Pins:
                 self._set_pwm_frequency(frequency, pin)
-

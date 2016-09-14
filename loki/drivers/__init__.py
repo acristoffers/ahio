@@ -67,5 +67,6 @@ __modules = [d for d in __modules if d]
 # all installed drivers, even if not usable in this platform
 installed = [driver.LokiDriverInfo.NAME for driver in __modules]
 # only installed drivers that are available in this platform
-available = [
-    d.LokiDriverInfo.NAME for d in __modules if d.LokiDriverInfo.AVAILABLE]
+available = [d.LokiDriverInfo.NAME
+             for d in __modules
+             if d.LokiDriverInfo.AVAILABLE]

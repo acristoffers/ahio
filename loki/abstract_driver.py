@@ -13,7 +13,7 @@ class AbstractLokiDriverInfo(object):
     for example.
     """
     NAME = 'Driver name'
-    AVAILABLE = 'True if the driver is available in this platform, false otherwise'
+    AVAILABLE = 'True if the driver is available, false otherwise'
 
 
 class AbstractDriver(object):
@@ -39,14 +39,18 @@ class AbstractDriver(object):
         capabilities. It should follow this format:
         \verbatim
         [ {
-            'id': 1, # some value that represents this pin in your implementation.
-                     # prefer numbers and Enums. This value will be used in `map_pin(a,p)`
+            'id': 1, # some value that represents this pin in your
+                     # implementation.
+                     # prefer numbers and Enums. This value will be used
+                     # in `map_pin(a,p)`
             'name': 'Pin 1', # a name that can be shown to the user, if needed
             'analog': {
                 'input': True, # if analog input is available
                 'output': False, # if analog output is available
-                'read_range': (0, 1023), # if input is supported, what is the valid range (both inclusive)
-                'write_range': (0, 5) # if output is supported, what is the valid range (both inclusive)
+                'read_range': (0, 1023), # if input is supported, what is the
+                                         # valid range (both inclusive)
+                'write_range': (0, 5) # if output is supported, what is the
+                                      #valid range (both inclusive)
             },
             'digital': {
                 'input': True, # if digital input is available
@@ -91,7 +95,12 @@ class AbstractDriver(object):
     def _linear_interpolation(self, x, imin, imax, omin, omax):
         return (imax * omin - imin * omax + x * (omax - omin)) / (imax - imin)
 
-    def set_linearize_values_for_pin(self, pin, read_min, read_max, write_min, write_max):
+    def set_pin_interpolation(self,
+                              pin,
+                              read_min,
+                              read_max,
+                              write_min,
+                              write_max):
         """Interpolates input and output values for `pin`.
 
         Changes the output and input of `AbstractDriver.read` and
@@ -114,26 +123,29 @@ class AbstractDriver(object):
         @arg write_max the max value for the linear interpolation of
              `AbstractDriver.write`.
         """
-        if type(pin) == list:
+        if type(pin) is list:
+            # I don't like breaking calls in multiple lines
+            args = (read_min, read_max, write_min, write_max)
             for p in pin:
-                self.set_linearize_values_for_pin(
-                    p, read_min, read_max, write_min, write_max)
-            return None
+                self.set_pin_interpolation(p, *args)
+            return
 
-        valid_read = (read_min != None and read_max != None)
-        valid_write = (write_min != None and write_max != None)
+        valid_read = (read_min is not None and read_max is not None)
+        valid_write = (write_min is not None and write_max is not None)
 
         if not valid_read and not valid_write:
             self._pin_lin.pop(pin, None)
-            return None
+            return
 
         pin_id = self._pin_mapping.get(pin, None)
         pins = [pin for pin in self.available_pins() if pin_id == pin['id']]
         read = pins[0]['analog']['read_range']
         write = pins[0]['analog']['write_range']
+        valid_read = valid_read and read
+        valid_write = valid_write and write
         self._pin_lin[pin] = {
-            'read': (*read, read_min, read_max) if valid_read and read else None,
-            'write': (write_min, write_max, *write) if valid_write and write else None
+            'read': (*read, read_min, read_max) if valid_read else None,
+            'write': (write_min, write_max, *write) if valid_write else None
         }
 
     def set_pin_direction(self, pin, direction):
@@ -144,8 +156,8 @@ class AbstractDriver(object):
         throws RuntimeError.
 
         If you're developing a driver, you should implement
-        _set_pin_direction(self, pin, direction) where `pin` will be one of your
-        internal IDs. If a pin is set to OUTPUT, put it on LOW state.
+        _set_pin_direction(self, pin, direction) where `pin` will be one of
+        your internal IDs. If a pin is set to OUTPUT, put it on LOW state.
 
         @arg pin pin id you've set using `AbstractDriver.map_pin`
         @arg mode a value from `AbstractDriver.Direction`
@@ -153,12 +165,13 @@ class AbstractDriver(object):
         @throw KeyError if pin isn't mapped.
         @throw RuntimeError if direction is not supported by pin.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             for p in pin:
                 self.set_pin_direction(p, direction)
-            return None
+            return
+
         pin_id = self._pin_mapping.get(pin, None)
-        if pin_id and type(direction) == loki.Direction:
+        if pin_id and type(direction) is loki.Direction:
             self._set_pin_direction(pin_id, direction)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
@@ -173,8 +186,9 @@ class AbstractDriver(object):
 
         @throw KeyError if pin isn't mapped.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             return [self.pin_direction(p) for p in pin]
+
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             return self._pin_direction(pin_id)
@@ -198,12 +212,15 @@ class AbstractDriver(object):
         @throw KeyError if pin isn't mapped.
         @throw RuntimeError if type is not supported by pin.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             for p in pin:
                 self.set_pin_type(p, ptype)
-            return None
+            return
+
         pin_id = self._pin_mapping.get(pin, None)
-        if pin_id and type(ptype) == loki.PortType:
+        if type(ptype) is not loki.PortType:
+            raise KeyError('ptype must be of type loki.PortType')
+        elif pin_id:
             self._set_pin_type(pin_id, ptype)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
@@ -218,8 +235,9 @@ class AbstractDriver(object):
 
         @throw KeyError if pin isn't mapped.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             return [self.pin_type(p) for p in pin]
+
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             return self._pin_type(pin_id)
@@ -232,12 +250,13 @@ class AbstractDriver(object):
         Sets `pin` output to given value. If the pin is in INPUT mode, do
         nothing. If it's an analog pin, value should be in write_range.
         If it's not in the allowed range, it will be clamped. If pin is in
-        digital mode, value can be `loki.LogicValue` if `pwm` = False, or a number
-        between 0 and 1 if `pwm` = True. If PWM is False, the pin will be set
-        to HIGH or LOW, if `pwm` is True, a PWM wave with the given cycle will be
-        created. If the pin does not support PWM and `pwm` is True, raise RuntimeError.
-        The `pwm` argument should be ignored in case the pin is analog. If value
-        is not valid for the given pwm/analog|digital combination, raise TypeError.
+        digital mode, value can be `loki.LogicValue` if `pwm` = False, or a
+        number between 0 and 1 if `pwm` = True. If PWM is False, the pin will
+        be set to HIGH or LOW, if `pwm` is True, a PWM wave with the given
+        cycle will be created. If the pin does not support PWM and `pwm` is
+        True, raise RuntimeError. The `pwm` argument should be ignored in case
+        the pin is analog. If value is not valid for the given
+        pwm/analog|digital combination, raise TypeError.
 
         If you're developing a driver, implement _write(self, pin, value, pwm)
 
@@ -246,22 +265,23 @@ class AbstractDriver(object):
         @arg pwm wether the output should be a pwm wave
 
         @throw RuntimeError if the pin does not support PWM and `pwm` is True.
-        @throw TypeError if value is not valid for this pin's mode and pwm value.
+        @throw TypeError if value is not valid for this pin's mode and pwm
+               value.
         @throw KeyError if pin isn't mapped.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             for p in pin:
                 self.write(p, value, pwm)
-            return None
+            return
 
-        if pwm and type(value) != int and type(value) != float:
+        if pwm and type(value) is not int and type(value) is not float:
             raise TypeError('pwm is set, but value is not a float or int')
 
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             lpin = self._pin_lin.get(pin, None)
             if lpin:
-                if lpin['write']:
+                if type(lpin['write']) is tuple:
                     write_range = lpin['write']
                     value = self._linear_interpolation(value, *write_range)
             self._write(pin_id, value, pwm)
@@ -282,14 +302,15 @@ class AbstractDriver(object):
 
         @throw KeyError if pin isn't mapped.
         """
-        if type(pin) == list:
+        if type(pin) is list:
             return [self.read(p) for p in pin]
+
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             value = self._read(pin_id)
             lpin = self._pin_lin.get(pin, None)
             if lpin:
-                if lpin['read']:
+                if type(lpin['read']) is tuple:
                     read_range = lpin['read']
                     value = self._linear_interpolation(value, *read_range)
             return value
@@ -310,9 +331,9 @@ class AbstractDriver(object):
         """Sets the analog reference to `reference`
 
         If the driver supports per pin reference setting, set pin to the
-        desired reference. If not, passing None means set to all, which is the default
-        in most hardware. If only per pin reference is supported and pin is
-        None, raise RuntimeError.
+        desired reference. If not, passing None means set to all, which is the
+        default in most hardware. If only per pin reference is supported and
+        pin is None, raise RuntimeError.
 
         If you're developing a driver, implement
         _set_analog_reference(self, reference, pin). Raise RuntimeError if pin
@@ -320,14 +341,14 @@ class AbstractDriver(object):
 
         @arg reference the value that describes the analog reference. See
             `AbstractDriver.analog_references`
-        @arg pin if the the driver supports it, the pin that will use `reference`
-            as reference. None for all.
+        @arg pin if the the driver supports it, the pin that will use
+            `reference` as reference. None for all.
 
         @throw RuntimeError if pin is None on a per pin only hardware, or if
             it's a valid pin on a global only analog reference hardware.
         @throw KeyError if pin isn't mapped.
         """
-        if pin == None:
+        if pin is None:
             self._set_analog_reference(reference, None)
         else:
             pin_id = self._pin_mapping.get(pin, None)
@@ -341,13 +362,13 @@ class AbstractDriver(object):
 
         If the driver supports per pin analog reference setting, returns the
         reference for pin `pin`. If pin is None, returns the global analog
-        reference. If only per pin reference is supported and pin is None, raise
-        RuntimeError.
+        reference. If only per pin reference is supported and pin is None,
+        raise RuntimeError.
 
         If you're developing a driver, implement _analog_reference(self, pin)
 
-        @arg pin if the the driver supports it, the pin that will use `reference`
-            as reference. None for all.
+        @arg pin if the the driver supports it, the pin that will use
+            `reference` as reference. None for all.
 
         @returns the reference used for pin
 
@@ -355,7 +376,7 @@ class AbstractDriver(object):
             it's a valid pin on a global only analog reference hardware.
         @throw KeyError if pin isn't mapped.
         """
-        if pin == None:
+        if pin is None:
             return self._analog_reference(None)
         else:
             pin_id = self._pin_mapping.get(pin, None)
@@ -376,14 +397,14 @@ class AbstractDriver(object):
         was set but is not supported by the platform.
 
         @arg frequency pwm frequency to be set, in Hz
-        @arg pin if the the driver supports it, the pin that will use `frequency`
-            as pwm frequency. None for all/global.
+        @arg pin if the the driver supports it, the pin that will use
+            `frequency` as pwm frequency. None for all/global.
 
         @throw RuntimeError if pin is None on a per pin only hardware, or if
             it's a valid pin on a global only hardware.
         @throw KeyError if pin isn't mapped.
         """
-        if pin == None:
+        if pin is None:
             self._set_pwm_frequency(frequency, None)
         else:
             pin_id = self._pin_mapping.get(pin, None)

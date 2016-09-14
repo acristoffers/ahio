@@ -14,15 +14,14 @@ found in `loki.abstract_driver.AbstractLokiDriverInfo`
 @author Álan Crístoffer <acristoffers@gmail.com>
 """
 
-__version__ = '1.0.0'
-
 from enum import Enum
+import loki.drivers
+
+__version__ = '1.0.0'
 
 PortType = Enum('PortType', 'Analog Digital')
 Direction = Enum('Direction', 'Output Input')
 LogicValue = Enum('LogicValue', 'Low High')
-
-import loki.drivers
 
 
 def list_available_drivers():
