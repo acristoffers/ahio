@@ -34,7 +34,7 @@ def list_available_drivers():
     @returns a list of strings that can be fed to `loki.new_driver` to get an
     instance of the desired driver.
     """
-    return drivers.available
+    return drivers.available_drivers()
 
 
 def driver_info(name):
