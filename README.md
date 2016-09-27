@@ -23,26 +23,25 @@ import loki
 print(loki.list_available_drivers())
 
 # Instantiate the desired driver
-arduino = loki.new_driver('Arduino')
+with loki.new_driver('Arduino') as arduino:
+  # The driver can have a driver-specific setup function. Call it as/if needed.
+  arduino.setup('/dev/tty.usbmodem1421')
 
-# The driver can have a driver-specific setup function. Call it as/if necessary.
-arduino.setup('/dev/tty.usbmodem1421')
+  # Map the pins. From now on, when you use 1 in the API, it will have effects
+  # on pin D3 in the Arduino. If you change hardware in the future, just change
+  # the mapping.
+  arduino.map_pin(1, arduino.Pins.D3)
+  arduino.map_pin(2, arduino.Pins.D13)
+  arduino.map_pin(3, arduino.Pins.A1)
 
-# Map the pins. From now on, when you use 1 in the API, it will have effects
-# on pin D3 in the Arduino. If you change hardware in the future, just change
-# the mapping.
-arduino.map_pin(1, arduino.Pins.D3)
-arduino.map_pin(2, arduino.Pins.D13)
-arduino.map_pin(3, arduino.Pins.A1)
+  # Change a pin direction (Input or Output)
+  arduino.set_pin_direction([1, 2], loki.Direction.Output)
+  arduino.set_pin_direction(3, loki.Direction.Input)
 
-# Change a pin direction (Input or Output)
-arduino.set_pin_direction([1, 2], loki.Direction.Output)
-arduino.set_pin_direction(3, loki.Direction.Input)
+  # Set the output of a pin
+  arduino.write([1, 2], loki.LogicValue.High)
+  arduino.write(1, 0.4, pwm=True)
 
-# Set the output of a pin
-arduino.write([1, 2], loki.LogicValue.High)
-arduino.write(1, 0.4, pwm=True)
-
-# Read the input of a pin
-print(arduino.read(3))
+  # Read the input of a pin
+  print(arduino.read(3))
 ```
