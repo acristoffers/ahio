@@ -33,6 +33,7 @@ setup(name='loki',
       packages=['loki', 'loki/drivers'],
       license="MIT",
       install_requires=[
-          'pySerial'
+          'pySerial',
+          'python-snap7'
       ]
       )

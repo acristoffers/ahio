@@ -302,10 +302,9 @@ class AbstractDriver(object):
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             lpin = self._pin_lin.get(pin, None)
-            if lpin:
-                if type(lpin['write']) is tuple:
-                    write_range = lpin['write']
-                    value = self._linear_interpolation(value, *write_range)
+            if lpin and type(lpin['write']) is tuple:
+                write_range = lpin['write']
+                value = self._linear_interpolation(value, *write_range)
             self._write(pin_id, value, pwm)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
@@ -331,10 +330,9 @@ class AbstractDriver(object):
         if pin_id:
             value = self._read(pin_id)
             lpin = self._pin_lin.get(pin, None)
-            if lpin:
-                if type(lpin['read']) is tuple:
-                    read_range = lpin['read']
-                    value = self._linear_interpolation(value, *read_range)
+            if lpin and type(lpin['read']) is tuple:
+                read_range = lpin['read']
+                value = self._linear_interpolation(value, *read_range)
             return value
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)

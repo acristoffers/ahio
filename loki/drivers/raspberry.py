@@ -156,7 +156,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
     def _write(self, pin, value, pwm):
         pin = self.__pin_to_int(pin)
         if self._pin_direction(pin) == loki.Direction.Input:
-            return None
+            return
         if pwm:
             if type(value) is int or type(value) is float:
                 value = int(100 * self.__clamp(float(value), 0.0, 1.0))
