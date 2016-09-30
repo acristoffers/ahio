@@ -54,6 +54,7 @@ setup(name='ahio',
       url='https://www.github.com/acristoffers/ahio',
       packages=find_packages(),
       license="MIT",
+      zip_safe=False,
       install_requires=[
           'pySerial',
           'python-snap7'
