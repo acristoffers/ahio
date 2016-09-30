@@ -20,22 +20,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import loki.abstract_driver
+import ahio.abstract_driver
 
 from enum import Enum
 
 try:
     import snap7
 except Exception:
-    LokiDriverInfo.AVAILABLE = False
+    ahioDriverInfo.AVAILABLE = False
 
 
-class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
+class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'snap7'
     AVAILABLE = True
 
 
-class Driver(loki.abstract_driver.AbstractDriver):
+class Driver(ahio.abstract_driver.AbstractDriver):
     _client = None
 
     def __enter__(self):
@@ -99,10 +99,10 @@ class Driver(loki.abstract_driver.AbstractDriver):
 
     def _pin_direction(self, pin):
         return {
-            'D': [loki.Direction.Input, loki.Direction.Output],
-            'M': [loki.Direction.Input, loki.Direction.Output],
-            'Q': loki.Direction.Output,
-            'I': loki.Direction.Input
+            'D': [ahio.Direction.Input, ahio.Direction.Output],
+            'M': [ahio.Direction.Input, ahio.Direction.Output],
+            'Q': ahio.Direction.Output,
+            'I': ahio.Direction.Input
         }[pin[0].upper()]
 
     def _set_pin_type(self, pin, ptype):
@@ -114,12 +114,12 @@ class Driver(loki.abstract_driver.AbstractDriver):
     def _write(self, pin, value, pwm):
         if pwm:
             raise RuntimeError('Pin does not support PWM')
-        if self._pin_direction(pin) == loki.Direction.Input:
+        if self._pin_direction(pin) == ahio.Direction.Input:
             raise RuntimeError('Can not write to Input')
         mem = self._parse_port_name(pin)
         value = {
-            loki.LogicValue.High: 1,
-            loki.LogicValue.Low: 0
+            ahio.LogicValue.High: 1,
+            ahio.LogicValue.Low: 0
         }.get(value, value)
         self._set_memory(mem, value)
 
@@ -128,8 +128,8 @@ class Driver(loki.abstract_driver.AbstractDriver):
         value = self._get_memory(mem)
         if mem[1] == 'X':
             return {
-                0: loki.LogicValue.Low,
-                1: loki.LogicValue.High
+                0: ahio.LogicValue.Low,
+                1: ahio.LogicValue.High
             }.get(value, value)
         else:
             return value

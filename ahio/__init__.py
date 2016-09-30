@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-"""@package loki
-Loki provides access to various I/O devices.
+"""@package ahio
+ahio provides access to various I/O devices.
 
 This package provides abstracted access to various digital and analogic I/O
 devices, such as Arduino, Raspberry PI, MyRIO and PLC. It allows the developer
@@ -30,14 +30,14 @@ specifics of each device, and to easily switch devices without code
 refactoring.
 
 The functions in this package list and instantiate the drivers. For the driver
-api, see `loki.abstract_driver.AbstractDriver`. Driver metadata format can be
-found in `loki.abstract_driver.AbstractLokiDriverInfo`
+api, see `ahio.abstract_driver.AbstractDriver`. Driver metadata format can be
+found in `ahio.abstract_driver.AbstractahioDriverInfo`
 
 @author Álan Crístoffer <acristoffers@gmail.com>
 """
 
 from enum import Enum
-import loki.drivers
+import ahio.drivers
 
 __author__ = 'Álan Crístoffer'
 __copyright__ = 'Copyright 2016, Álan Crístoffer'
@@ -46,7 +46,7 @@ __license__ = 'MIT'
 __version__ = '1.0.0'
 __maintainer__ = 'Álan Crístoffer'
 __email__ = 'acristoffers@gmail.com'
-__status__ = 'In Development'
+__status__ = 'Release'
 
 PortType = Enum('PortType', 'Analog Digital')
 Direction = Enum('Direction', 'Output Input')
@@ -60,7 +60,7 @@ def list_available_drivers():
     it will not contain "Raspberry" if you're not running on a Raspberry Pi,
     even if the raspberry.py script is present in the drivers directory.
 
-    @returns a list of strings that can be fed to `loki.new_driver` to get an
+    @returns a list of strings that can be fed to `ahio.new_driver` to get an
     instance of the desired driver.
     """
     return drivers.available_drivers()
@@ -72,7 +72,7 @@ def driver_info(name):
     Returns a class which static properties contains metadata from the
     driver, such as name and availability.
 
-    @returns a subclass from `loki.abstract_driver.AbstractLokiDriverInfo` with
+    @returns a subclass from `ahio.abstract_driver.AbstractahioDriverInfo` with
     metadata from the driver.
     """
     return drivers.driver_info(name)
@@ -82,7 +82,7 @@ def new_driver(name):
     """Instantiates a new object of the named driver.
 
     The API used by the returned object can be seen in
-    `loki.abstract_driver.AbstractDriver`
+    `ahio.abstract_driver.AbstractDriver`
 
     @returns a Driver object from the required type of None if it's not
     available

@@ -44,9 +44,9 @@ def available_drivers():
         __modules = list(__modules)
 
     if not __available:
-        __available = [d.LokiDriverInfo.NAME
+        __available = [d.ahioDriverInfo.NAME
                        for d in __modules
-                       if d.LokiDriverInfo.AVAILABLE]
+                       if d.ahioDriverInfo.AVAILABLE]
 
     return __available
 
@@ -57,18 +57,18 @@ def driver_info(name):
     Returns a class which static properties contains metadata from the
     driver, such as name and availability.
 
-    @returns a subclass from `loki.abstract_driver.AbstractLokiDriverInfo` with
+    @returns a subclass from `ahio.abstract_driver.AbstractahioDriverInfo` with
     metadata from the driver.
     """
     driver = __locate_driver_named(name)
-    return driver.LokiDriverInfo if driver else None
+    return driver.ahioDriverInfo if driver else None
 
 
 def new_driver_object(name):
     """Instantiates a new object of the named driver.
 
     The API used by the returned object can be seen in
-    `loki.abstract_driver.AbstractDriver`
+    `ahio.abstract_driver.AbstractDriver`
 
     @returns a Driver object from the required type of None if it's not
     available
@@ -80,18 +80,18 @@ def new_driver_object(name):
 def __load_driver(name):
     """Tries to load the driver named @arg name.
 
-    A driver is considered valid if it has a LokiDriverInfo object. It should
-    however implement all APIs described in `loki.abstract_driver`, as they'll
+    A driver is considered valid if it has a ahioDriverInfo object. It should
+    however implement all APIs described in `ahio.abstract_driver`, as they'll
     be needed to use the driver.
 
     @returns the driver package, or False if it failed.
     """
     try:
-        mod_name = 'loki.drivers.' + name.replace('.py', '')
+        mod_name = 'ahio.drivers.' + name.replace('.py', '')
         driver_path = __modules_path + '/' + name
         loader = importlib.machinery.SourceFileLoader(mod_name, driver_path)
         driver = loader.load_module()
-        return driver if hasattr(driver, 'LokiDriverInfo') else False
+        return driver if hasattr(driver, 'ahioDriverInfo') else False
     except Exception:
         return False
 
@@ -106,7 +106,7 @@ def __locate_driver_named(name):
     if type(__modules) is not list:
         __modules = list(__modules)
 
-    ms = [d for d in __modules if d.LokiDriverInfo.NAME == name]
+    ms = [d for d in __modules if d.ahioDriverInfo.NAME == name]
     if not ms:
         return None
     return ms[0]

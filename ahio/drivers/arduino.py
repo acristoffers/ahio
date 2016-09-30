@@ -20,19 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import loki.abstract_driver
+import ahio.abstract_driver
 
 import serial
 import time
 from enum import Enum
 
 
-class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
+class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'Arduino'
     AVAILABLE = True
 
 
-class Driver(loki.abstract_driver.AbstractDriver):
+class Driver(ahio.abstract_driver.AbstractDriver):
     _serial = None
 
     Pins = Enum(
@@ -66,7 +66,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
 
         ps = [p for p in self.available_pins() if p['digital']['output']]
         for pin in ps:
-            self._set_pin_direction(pin['id'], loki.Direction.Output)
+            self._set_pin_direction(pin['id'], ahio.Direction.Output)
 
     def __clamp(self, value, min, max):
         return sorted((min, value, max))[1]
@@ -105,9 +105,9 @@ class Driver(loki.abstract_driver.AbstractDriver):
         return sorted(pwms + pins, key=lambda pin: pin['id'].value)
 
     def _set_pin_direction(self, pin, direction):
-        if pin.name.startswith('A') and direction == loki.Direction.Output:
+        if pin.name.startswith('A') and direction == ahio.Direction.Output:
             raise RuntimeError('Analog pins can only be used as Input')
-        if direction == loki.Direction.Input:
+        if direction == ahio.Direction.Input:
             self._serial.write(
                 b'\x02\xC3' + bytes({pin.value - 1}) + bytes({1}))
         else:
@@ -120,25 +120,25 @@ class Driver(loki.abstract_driver.AbstractDriver):
         self._serial.write(b'\x02\xC4' + bytes({pin.value - 1}))
         direction = self._serial.read()
         if direction == b'\x01':
-            return loki.Direction.Input
+            return ahio.Direction.Input
         elif direction == b'\x00':
-            return loki.Direction.Output
+            return ahio.Direction.Output
         else:
             return None
 
     def _set_pin_type(self, pin, ptype):
         is_analog = pin.name.startswith('A')
-        if is_analog and ptype == loki.PortType.Digital:
+        if is_analog and ptype == ahio.PortType.Digital:
             raise RuntimeError('Analog pin can not be set as digital')
-        if not is_analog and ptype == loki.PortType.Analog:
+        if not is_analog and ptype == ahio.PortType.Analog:
             raise RuntimeError('Digtal pin can not be set as analog')
 
     def _pin_type(self, pin):
-        pt = loki.PortType
+        pt = ahio.PortType
         return pt.Analog if pin.name.startswith('A') else pt.Digital
 
     def _write(self, pin, value, pwm):
-        if self._pin_direction(pin) == loki.Direction.Input:
+        if self._pin_direction(pin) == ahio.Direction.Input:
             return
         if pin.name.startswith('D'):
             if pwm:
@@ -152,13 +152,13 @@ class Driver(loki.abstract_driver.AbstractDriver):
                 else:
                     raise TypeError('value not a float or int between 0 and 1')
             else:
-                if type(value) is loki.LogicValue:
-                    value = 1 if value == loki.LogicValue.High else 0
+                if type(value) is ahio.LogicValue:
+                    value = 1 if value == ahio.LogicValue.High else 0
                     command = b'\x02\xC7' + bytes({pin.value - 1})
                     arg = bytes({value})
                     self._serial.write(command + arg)
                 else:
-                    raise TypeError('Value should be of type loki.LogicValue')
+                    raise TypeError('Value should be of type ahio.LogicValue')
         else:
             raise RuntimeError('Can not write to analog pin')
 
@@ -166,7 +166,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
         if pin.name.startswith('D'):
             self._serial.write(b'\x02\xC5' + bytes({pin.value - 1}))
             value = self._serial.read()
-            lv = loki.LogicValue
+            lv = ahio.LogicValue
             return lv.High if value == b'\x01' else lv.Low
         else:
             self._serial.write(b'\x02\xC6' + bytes({pin.value - 14}))

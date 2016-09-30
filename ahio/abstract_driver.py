@@ -20,14 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-"""@package loki.abstract_driver
+"""@package ahio.abstract_driver
 Contains abstract classes that should be implemented by drivers.
 """
 
-import loki
+import ahio
 
 
-class AbstractLokiDriverInfo(object):
+class AbstractahioDriverInfo(object):
     """Abstract class containing information about the driver.
 
     This class should be inherited and fully implemented by every driver. It
@@ -193,18 +193,18 @@ class AbstractDriver(object):
             return
 
         pin_id = self._pin_mapping.get(pin, None)
-        if pin_id and type(direction) is loki.Direction:
+        if pin_id and type(direction) is ahio.Direction:
             self._set_pin_direction(pin_id, direction)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
 
     def pin_direction(self, pin):
-        """Gets the `loki.Direction` this pin was set to.
+        """Gets the `ahio.Direction` this pin was set to.
 
         If you're developing a driver, implement _pin_direction(self, pin)
 
         @arg pin the pin you want to see the mode
-        @returns the `loki.Direction` the pin is set to
+        @returns the `ahio.Direction` the pin is set to
 
         @throw KeyError if pin isn't mapped.
         """
@@ -240,20 +240,20 @@ class AbstractDriver(object):
             return
 
         pin_id = self._pin_mapping.get(pin, None)
-        if type(ptype) is not loki.PortType:
-            raise KeyError('ptype must be of type loki.PortType')
+        if type(ptype) is not ahio.PortType:
+            raise KeyError('ptype must be of type ahio.PortType')
         elif pin_id:
             self._set_pin_type(pin_id, ptype)
         else:
             raise KeyError('Requested pin is not mapped: %s' % pin)
 
     def pin_type(self, pin):
-        """Gets the `loki.PortType` this pin was set to.
+        """Gets the `ahio.PortType` this pin was set to.
 
         If you're developing a driver, implement _pin_type(self, pin)
 
         @arg pin the pin you want to see the mode
-        @returns the `loki.PortType` the pin is set to
+        @returns the `ahio.PortType` the pin is set to
 
         @throw KeyError if pin isn't mapped.
         """
@@ -272,7 +272,7 @@ class AbstractDriver(object):
         Sets `pin` output to given value. If the pin is in INPUT mode, do
         nothing. If it's an analog pin, value should be in write_range.
         If it's not in the allowed range, it will be clamped. If pin is in
-        digital mode, value can be `loki.LogicValue` if `pwm` = False, or a
+        digital mode, value can be `ahio.LogicValue` if `pwm` = False, or a
         number between 0 and 1 if `pwm` = True. If PWM is False, the pin will
         be set to HIGH or LOW, if `pwm` is True, a PWM wave with the given
         cycle will be created. If the pin does not support PWM and `pwm` is
@@ -314,7 +314,7 @@ class AbstractDriver(object):
 
         Returns the value read from pin `pin`. If it's an analog pin, returns
         a number in analog.input_range. If it's digital, returns
-        `loki.LogicValue`.
+        `ahio.LogicValue`.
 
         If you're developing a driver, implement _read(self, pin)
 

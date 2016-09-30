@@ -22,15 +22,18 @@
 # THE SOFTWARE.
 
 from setuptools import setup
-import loki
+import ahio
 
-setup(name='loki',
-      version=loki.__version__,
+setup(name='ahio',
+      version=ahio.__version__,
       description='I/O Communication Library',
+      long_description='Abstracts the interfacing with various I/O hardware',
+      platforms='any',
+      keywords='data acquisition i/o input output communication hardware',
       author='Álan Crístoffer',
       author_email='acristoffers@gmail.com',
-      url='https://www.github.com/acristoffers/Loki',
-      packages=['loki', 'loki/drivers'],
+      url='https://www.github.com/acristoffers/ahio',
+      packages=['ahio', 'ahio/drivers'],
       license="MIT",
       install_requires=[
           'pySerial',

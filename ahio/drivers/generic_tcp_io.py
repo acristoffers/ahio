@@ -20,19 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import loki.abstract_driver
+import ahio.abstract_driver
 
 import json
 import socket
 from enum import Enum
 
 
-class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
+class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'GenericTCPIO'
     AVAILABLE = True
 
 
-class Driver(loki.abstract_driver.AbstractDriver):
+class Driver(ahio.abstract_driver.AbstractDriver):
     _socket = None
 
     def __enter__(self):
@@ -78,7 +78,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
             raise RuntimeError('Unknown response')
 
     def _set_pin_direction(self, pin, direction):
-        direction = 'INPUT' if direction == loki.Direction.Input else 'OUTPUT'
+        direction = 'INPUT' if direction == ahio.Direction.Input else 'OUTPUT'
         command = ('SETDIRECTION %s %s\n' % (pin, direction)).encode('utf8')
         self._socket.send(command)
         with self._socket.makefile() as f:
@@ -97,7 +97,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
             answer = f.readline()
         if answer.startswith('OK'):
             direction = answer[3:].strip()
-            d = loki.Direction
+            d = ahio.Direction
             return d.Input if direction == 'INPUT' else d.Output
         elif answer.startswith('ERROR'):
             raise RuntimeError(answer[6:])
@@ -105,7 +105,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
             raise RuntimeError('Unknown response')
 
     def _set_pin_type(self, pin, ptype):
-        ptype = 'DIGITAL' if ptype == loki.PortType.Digital else 'ANALOG'
+        ptype = 'DIGITAL' if ptype == ahio.PortType.Digital else 'ANALOG'
         command = ('SETTYPE %s %s\n' % (pin, ptype)).encode('utf8')
         self._socket.send(command)
         with self._socket.makefile() as f:
@@ -124,7 +124,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
             answer = f.readline()
         if answer.startswith('OK'):
             ptype = answer[3:].strip()
-            pt = loki.PortType
+            pt = ahio.PortType
             return pt.Digital if ptype == 'DIGITAL' else pt.Analog
         elif answer.startswith('ERROR'):
             raise RuntimeError(answer[6:])
@@ -139,10 +139,10 @@ class Driver(loki.abstract_driver.AbstractDriver):
             return None
 
     def _write(self, pin, value, pwm):
-        if self._pin_direction(pin) == loki.Direction.Input:
+        if self._pin_direction(pin) == ahio.Direction.Input:
             return None
         pin_info = self._find_port_info(pin)
-        if self._pin_type(pin) == loki.PortType.Digital:
+        if self._pin_type(pin) == ahio.PortType.Digital:
             if not pin_info['digital']['output']:
                 raise RuntimeError('Pin does not support digital output')
             if pwm:
@@ -151,7 +151,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
                 value = self.__clamp(value, 0, 1)
                 command = ('WRITEPWM %s %s\n' % (pin, value)).encode('utf8')
             else:
-                value = 'HIGH' if value == loki.LogicValue.High else 'LOW'
+                value = 'HIGH' if value == ahio.LogicValue.High else 'LOW'
                 command = ('WRITEDIGITAL %s %s\n' %
                            (pin, value)).encode('utf8')
         else:
@@ -173,11 +173,11 @@ class Driver(loki.abstract_driver.AbstractDriver):
     def _read(self, pin):
         pin_info = self._find_port_info(pin)
         pin_type = self._pin_type(pin)
-        if pin_info['digital']['input'] and pin_type == loki.PortType.Digital:
-            da = loki.PortType.Digital
+        if pin_info['digital']['input'] and pin_type == ahio.PortType.Digital:
+            da = ahio.PortType.Digital
             command = ('READDIGITAL %s\n' % pin).encode('utf8')
-        elif pin_info['analog']['input'] and pin_type == loki.PortType.Analog:
-            da = loki.PortType.Analog
+        elif pin_info['analog']['input'] and pin_type == ahio.PortType.Analog:
+            da = ahio.PortType.Analog
             command = ('READANALOG %s\n' % pin).encode('utf8')
         else:
             raise RuntimeError('Pin does not support input or is not set up')
@@ -186,8 +186,8 @@ class Driver(loki.abstract_driver.AbstractDriver):
             answer = f.readline()
         if answer.startswith('OK'):
             value = answer[3:].strip()
-            if da == loki.PortType.Digital:
-                lv = loki.LogicValue
+            if da == ahio.PortType.Digital:
+                lv = ahio.LogicValue
                 return lv.High if value == 'HIGH' else lv.Low
             else:
                 return int(value)

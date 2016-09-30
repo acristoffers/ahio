@@ -18,7 +18,7 @@ The server can try to handshake with lower protocol versions if handshake fails.
 
 Lists all available I/O Ports.
 
-*Answer:* `OK [obj,obj,...]` where obj is a JSON representation of the structure described in `loki.abstract_driver.AbstractDriver.available_pins`. Here `id` must be an integer. For example:
+*Answer:* `OK [obj,obj,...]` where obj is a JSON representation of the structure described in `ahio.abstract_driver.AbstractDriver.available_pins`. Here `id` must be an integer. For example:
 ```json
 [{
     "id": 1,
@@ -103,7 +103,7 @@ analog reference.
 
 ### SETANALOGREFERENCE REFERENCE [PIN]
 
-Sets the analog reference to `REFERENCE`. `REFERENCE` must be in the list returned by [`ANALOGREFERENCES`](#ANALOGREFERENCES). See `loki.abstract_driver.AbstractDriver.set_analog_reference` for more information regarding this function.
+Sets the analog reference to `REFERENCE`. `REFERENCE` must be in the list returned by [`ANALOGREFERENCES`](#ANALOGREFERENCES). See `ahio.abstract_driver.AbstractDriver.set_analog_reference` for more information regarding this function.
 
 *Answer:* `OK` or `ERROR MSG`, where `MSG` is a message that describes the error that occurred.
 

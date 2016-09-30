@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import loki.abstract_driver
+import ahio.abstract_driver
 
 import os.path
 import platform
@@ -59,7 +59,7 @@ def pi_version():
         return None
 
 
-class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
+class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'Raspberry'
     AVAILABLE = pi_version() is not None
 
@@ -68,15 +68,15 @@ class LokiDriverInfo(loki.abstract_driver.AbstractLokiDriverInfo):
 try:
     import RPi.GPIO as GPIO
 except ImportError:
-    if LokiDriverInfo.AVAILABLE:
+    if ahioDriverInfo.AVAILABLE:
         print("RPi.GPIO not installed: sudo apt-get install python3-rpi.gpio")
-        LokiDriverInfo.AVAILABLE = false
+        ahioDriverInfo.AVAILABLE = false
 except RuntimeError:
-    LokiDriverInfo.AVAILABLE = false
+    ahioDriverInfo.AVAILABLE = false
     print("You probably need superuser privileges. Try running with sudo")
 
 
-class Driver(loki.abstract_driver.AbstractDriver):
+class Driver(ahio.abstract_driver.AbstractDriver):
 
     Pins = Enum(
         'Pins',
@@ -86,10 +86,10 @@ class Driver(loki.abstract_driver.AbstractDriver):
     __pwm_frequency = {}
 
     def __init__(self):
-        if LokiDriverInfo.AVAILABLE:
+        if ahioDriverInfo.AVAILABLE:
             GPIO.setmode(GPIO.BOARD)
             for pin in Driver.Pins:
-                self._set_pin_direction(pin, loki.Direction.Output)
+                self._set_pin_direction(pin, ahio.Direction.Output)
 
     def __enter__(self):
         return self
@@ -130,7 +130,7 @@ class Driver(loki.abstract_driver.AbstractDriver):
 
     def _set_pin_direction(self, pin, direction):
         pin = self.__pin_to_int(pin)
-        if direction == loki.Direction.Input:
+        if direction == ahio.Direction.Input:
             GPIO.setup(pin, GPIO.IN)
         else:
             GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
@@ -140,22 +140,22 @@ class Driver(loki.abstract_driver.AbstractDriver):
         pin = self.__pin_to_int(pin)
         function = GPIO.gpio_function(pin)
         if function == GPIO.IN:
-            return loki.Direction.Input
+            return ahio.Direction.Input
         elif function == GPIO.OUT or function == GPIO.PWM:
-            return loki.Direction.Output
+            return ahio.Direction.Output
         else:
             return None
 
     def _set_pin_type(self, pin, ptype):
-        if ptype != loki.PortType.Digital:
+        if ptype != ahio.PortType.Digital:
             raise RuntimeError('Raspberry Pi pins can only be used as Digital')
 
     def _pin_type(self, pin):
-        return loki.PortType.Digital
+        return ahio.PortType.Digital
 
     def _write(self, pin, value, pwm):
         pin = self.__pin_to_int(pin)
-        if self._pin_direction(pin) == loki.Direction.Input:
+        if self._pin_direction(pin) == ahio.Direction.Input:
             return
         if pwm:
             if type(value) is int or type(value) is float:
@@ -171,12 +171,12 @@ class Driver(loki.abstract_driver.AbstractDriver):
                 raise TypeError(
                     'Value should be a float or int between 0 and 1')
         else:
-            if type(value) is loki.LogicValue:
-                lv = loki.LogicValue
+            if type(value) is ahio.LogicValue:
+                lv = ahio.LogicValue
                 value = GPIO.HIGH if value == lv.High else GPIO.LOW
                 GPIO.output(pin, value)
             else:
-                raise TypeError('Value should be of type loki.LogicValue')
+                raise TypeError('Value should be of type ahio.LogicValue')
 
     def _read(self, pin):
         pin = self.__pin_to_int(pin)
