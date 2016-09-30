@@ -21,19 +21,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from setuptools import setup
+from codecs import open
+from os import path
+from setuptools import setup, find_packages
 import ahio
+
+
+pwd = path.abspath(path.dirname(__file__))
+with open(path.join(pwd, 'README'), encoding='utf-8') as f:
+    long_description = f.read()
+
 
 setup(name='ahio',
       version=ahio.__version__,
       description='I/O Communication Library',
-      long_description='Abstracts the interfacing with various I/O hardware',
-      platforms='any',
+      long_description=long_description,
+      # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'Topic :: Software Development :: Build Tools',
+          'License :: OSI Approved :: MIT License',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 3 :: Only',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Topic :: Scientific/Engineering :: Human Machine Interfaces'
+      ],
       keywords='data acquisition i/o input output communication hardware',
       author='Álan Crístoffer',
       author_email='acristoffers@gmail.com',
       url='https://www.github.com/acristoffers/ahio',
-      packages=['ahio', 'ahio/drivers'],
+      packages=find_packages(),
       license="MIT",
       install_requires=[
           'pySerial',
