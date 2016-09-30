@@ -40,7 +40,6 @@ setup(name='ahio',
       classifiers=[
           'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
-          'Topic :: Scientific/Engineering :: Human Machine Interfaces',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
           'Operating System :: OS Independent',
