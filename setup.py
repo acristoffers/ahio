@@ -28,7 +28,7 @@ import ahio
 
 
 pwd = path.abspath(path.dirname(__file__))
-with open(path.join(pwd, 'README'), encoding='utf-8') as f:
+with open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 
