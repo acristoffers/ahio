@@ -114,6 +114,16 @@ class AbstractDriver(object):
         else:
             self._pin_mapping.pop(abstract_pin_id, None)
 
+    def mapped_pins(self):
+        """Returns a dictionary containing the mapped pins.
+
+        Each key of the dictionary is the ID you set with map_pin, and each
+        value is the driver-specific ID.
+
+        @returns a dictionary of mapped pins
+        """
+        return self._pin_mapping
+
     def _linear_interpolation(self, x, imin, imax, omin, omax):
         return (imax * omin - imin * omax + x * (omax - omin)) / (imax - imin)
 
