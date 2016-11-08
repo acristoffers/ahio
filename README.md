@@ -55,3 +55,8 @@ with ahio.new_driver('Arduino') as arduino:
   # Read the input of a pin
   print(arduino.read(3))
 ```
+
+Documentation
+-------------
+
+Documentation is hosted at [GitHub](https://acristoffers.github.io/ahio)
