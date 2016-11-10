@@ -56,6 +56,8 @@ class Driver(ahio.abstract_driver.AbstractDriver):
                supported.
         @throw any exception thrown by `socket.socket`'s methods.
         """
+        address = str(address)
+        port = int(port)
         self._socket = socket.socket()
         self._socket.connect((address, port))
         self._socket.send(b'HELLO 1.0\n')

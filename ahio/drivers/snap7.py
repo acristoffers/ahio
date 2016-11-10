@@ -86,6 +86,10 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         @throw RuntimeError if something went wrong
         @throw any exception thrown by `snap7`'s methods.
         """
+        rack = int(rack)
+        slot = int(slot)
+        port = int(port)
+        address = str(address)
         self._client = snap7.client.Client()
         self._client.connect(address, rack, slot, port)
 

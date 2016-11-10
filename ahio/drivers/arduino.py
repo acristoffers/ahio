@@ -52,6 +52,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
         @throw RuntimeError can't connect to Arduino
         """
+        port = str(port)
         # timeout is used by all I/O operations
         self._serial = serial.Serial(port, 115200, timeout=2)
         time.sleep(2)  # time to Arduino reset
