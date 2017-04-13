@@ -84,7 +84,7 @@ def new_driver(name):
     The API used by the returned object can be seen in
     `ahio.abstract_driver.AbstractDriver`
 
-    @returns a Driver object from the required type of None if it's not
+    @returns a Driver object from the required type or None if it's not
     available
     """
     return drivers.new_driver_object(name)
