@@ -23,9 +23,9 @@
 
 from codecs import open
 from os import path
-from setuptools import setup, find_packages
-import ahio
 
+import ahio
+from setuptools import find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
 with open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
@@ -38,7 +38,7 @@ setup(name='ahio',
       long_description=long_description,
       # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
