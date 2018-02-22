@@ -54,6 +54,9 @@ def pi_version():
     elif match.group(1) == 'BCM2709':
         # Pi 2
         return 2
+    elif match.group(1) == 'BCM2835':
+        # Pi 3
+        return 3
     else:
         # Something else, not a pi.
         return None
@@ -62,6 +65,7 @@ def pi_version():
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'Raspberry'
     AVAILABLE = pi_version() is not None
+
 
 # Just try to import it. Code that depends on it should not be executed outside
 # of Raspberry Pi anyway
