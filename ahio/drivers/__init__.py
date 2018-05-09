@@ -26,12 +26,30 @@ import sys
 
 # path to the drivers folder
 __modules_path = os.path.dirname(os.path.realpath(__file__))
+# additional added paths
+__modules_path_user = []
 # tries to load every file in the drivers folder
-__modules = (__load_driver(driver) for driver in os.listdir(__modules_path))
+__modules = (__load_driver(__modules_path + '/' + driver)
+             for driver in os.listdir(__modules_path))
 # filters out the False elements, leaving only valid drivers
 __modules = (d for d in __modules if d)
 # only installed drivers that are available in this platform
 __available = None
+# counts the number of drivers loaded. The number is appended to driver name
+# to avoid collision
+__count = 0
+
+
+def add_path(path):
+    global __modules_path_user
+    global __modules
+    global __available
+    __modules_path_user.append(path)
+    path = [__modules_path, *__modules_path_user]
+    fs = [d + '/' + f for d in path for f in os.listdir(d)]
+    __modules = (__load_driver(driver) for driver in fs)
+    __modules = (d for d in __modules if d)
+    __available = None
 
 
 def available_drivers():
@@ -86,11 +104,14 @@ def __load_driver(name):
 
     @returns the driver package, or False if it failed.
     """
+    global __count
     try:
-        mod_name = 'ahio.drivers.' + name.replace('.py', '')
-        driver_path = __modules_path + '/' + name
-        loader = importlib.machinery.SourceFileLoader(mod_name, driver_path)
+        print('Looking for %s' % name)
+        dname = os.path.basename(name).replace('.py', '')
+        mod_name = 'ahio.drivers.%s%d' % (dname, __count)
+        loader = importlib.machinery.SourceFileLoader(mod_name, name)
         driver = loader.load_module()
+        __count += 1
         return driver if hasattr(driver, 'ahioDriverInfo') else False
     except Exception:
         return False

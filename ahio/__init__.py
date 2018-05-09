@@ -44,7 +44,7 @@ __author__ = 'Álan Crístoffer'
 __copyright__ = 'Copyright 2016, Álan Crístoffer'
 __credits__ = ['Álan Crístoffer']
 __license__ = 'MIT'
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __maintainer__ = 'Álan Crístoffer'
 __email__ = 'acristoffers@gmail.com'
 __status__ = 'Release'
@@ -52,6 +52,11 @@ __status__ = 'Release'
 PortType = Enum('PortType', 'Analog Digital')
 Direction = Enum('Direction', 'Output Input')
 LogicValue = Enum('LogicValue', 'Low High')
+
+
+def add_path(path):
+    """Adds a directory to the list of folders where to load drivers from"""
+    drivers.add_path(path)
 
 
 def list_available_drivers():
