@@ -52,6 +52,29 @@ def add_path(path):
     __available = None
 
 
+def remove_path(path):
+    global __modules_path_user
+    global __modules
+    global __available
+    __modules_path_user = [x for x in __modules_path_user if x != path]
+    path = [__modules_path, *__modules_path_user]
+    fs = [d + '/' + f for d in path for f in os.listdir(d)]
+    __modules = (__load_driver(driver) for driver in fs)
+    __modules = (d for d in __modules if d)
+    __available = None
+
+
+def clear_path():
+    global __modules_path_user
+    global __modules
+    global __available
+    __modules_path_user = []
+    fs = [d + '/' + f for d in [__modules_path] for f in os.listdir(d)]
+    __modules = (__load_driver(driver) for driver in fs)
+    __modules = (d for d in __modules if d)
+    __available = None
+
+
 def available_drivers():
     """Returns a list of available drivers names.
     """
