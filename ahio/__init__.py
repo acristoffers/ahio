@@ -64,9 +64,9 @@ def remove_path(path):
     drivers.remove_path(path)
 
 
-def clear_path(path):
+def clear_path():
     """Clears the list of folders where to load drivers from"""
-    drivers.clear_path(path)
+    drivers.clear_path()
 
 
 def list_available_drivers():
