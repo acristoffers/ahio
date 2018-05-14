@@ -59,6 +59,16 @@ def add_path(path):
     drivers.add_path(path)
 
 
+def remove_path(path):
+    """Removes a directory from the list of folders where to load drivers from"""
+    drivers.remove_path(path)
+
+
+def clear_path(path):
+    """Clears the list of folders where to load drivers from"""
+    drivers.clear_path(path)
+
+
 def list_available_drivers():
     """Returns a list of string with the names of available drivers.
 
