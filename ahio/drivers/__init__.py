@@ -129,7 +129,6 @@ def __load_driver(name):
     """
     global __count
     try:
-        print('Looking for %s' % name)
         dname = os.path.basename(name).replace('.py', '')
         mod_name = 'ahio.drivers.%s%d' % (dname, __count)
         loader = importlib.machinery.SourceFileLoader(mod_name, name)
