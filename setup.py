@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import pypandoc
 from codecs import open
 from os import path
 
@@ -28,13 +29,12 @@ import ahio
 from setuptools import find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
-with open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
-
+long_description = pypandoc.convert('README.md', 'rst')
 
 setup(name='ahio',
       version=ahio.__version__,
       description='I/O Communication Library',
+      long_description_content_type="text/markdown",
       long_description=long_description,
       # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
