@@ -24,6 +24,7 @@ from enum import Enum
 
 import ahio.abstract_driver
 import numpy as np
+import scipy.signal
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
@@ -45,6 +46,23 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def setup(self, model='([[0.5]], [[1]], [[1]], [[0]])'):
         self.model = [np.array(x) for x in eval(model)]
+
+        if len(self.model) % 2 == 1:
+            *self.model, dt = self.model
+            dt = np.asscalar(dt)
+            G = scipy.signal.dlti(*self.model, dt=dt)
+            G = scipy.signal.StateSpace(G)
+            self.model = G.A, G.B, G.C, G.D
+        else:
+            G = scipy.signal.lti(*self.model)
+            G = scipy.signal.StateSpace(G)
+            self.model = G.A, G.B, G.C, G.D
+            vals = scipy.linalg.eigvals(G.A)
+            dt = max(0.1, float('%.1f' % (max(abs(np.real(vals))) / 5)))
+            if type(self.U) == list:
+                dt = self.T / len(self.U)
+            *self.model, _ = scipy.signal.cont2discrete(self.model, dt)
+
         A, B, C, D = self.model
         self.u = 0
         self.x = np.zeros((A.shape[0], 1))
@@ -87,7 +105,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         self.u = value
 
     def _read(self, pin):
-        A, B, C, D = self.model
+        A, B, C, D, _ = self.model
         if A.shape[0] == 1:
             self.x = A * self.x + B * self.u
             y = C * self.x
