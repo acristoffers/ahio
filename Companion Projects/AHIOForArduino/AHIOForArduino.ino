@@ -19,8 +19,8 @@ byte convertAnalogReference()
         case DEFAULT:
             return 0;
 
-        case INTERNAL:
-            return 1;
+//        case INTERNAL:
+//            return 1;
 
         case EXTERNAL:
             return 2;
@@ -36,8 +36,8 @@ byte convertAnalogReference(uint8_t reference)
         case 0:
             return DEFAULT;
 
-        case 1:
-            return INTERNAL;
+//        case 1:
+//            return INTERNAL;
 
         case 2:
             return EXTERNAL;
