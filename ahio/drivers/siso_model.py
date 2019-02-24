@@ -103,7 +103,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         self.u = value
 
     def _read(self, pin):
-        A, B, C, D, _ = self.model
+        A, B, C, D = self.model
         if A.shape[0] == 1:
             self.x = A * self.x + B * self.u
             y = C * self.x
