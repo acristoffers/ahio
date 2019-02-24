@@ -29,34 +29,30 @@ import ahio
 from setuptools import find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
-long_description = pypandoc.convert('README.md', 'rst')
+long_description = pypandoc.convert_text('README.md', 'rst')
 
-setup(name='ahio',
-      version=ahio.__version__,
-      description='I/O Communication Library',
-      long_description_content_type="text/markdown",
-      long_description=long_description,
-      # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
-      classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Intended Audience :: Developers',
-          'License :: OSI Approved :: MIT License',
-          'Natural Language :: English',
-          'Operating System :: OS Independent',
-          'Programming Language :: Python :: 3 :: Only',
-          'Programming Language :: Python :: 3.5',
-          'Programming Language :: Python :: 3.6',
-          'Topic :: Scientific/Engineering :: Human Machine Interfaces'
-      ],
-      keywords='data acquisition i/o input output communication hardware',
-      author='Álan Crístoffer',
-      author_email='acristoffers@gmail.com',
-      url='https://www.github.com/acristoffers/ahio',
-      packages=find_packages(),
-      license="MIT",
-      zip_safe=False,
-      install_requires=[
-          'pySerial',
-          'python-snap7'
-      ]
-      )
+setup(
+    name='ahio',
+    version=ahio.__version__,
+    description='I/O Communication Library',
+    long_description_content_type="text/markdown",
+    long_description=long_description,
+    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English', 'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Scientific/Engineering :: Human Machine Interfaces'
+    ],
+    keywords='data acquisition i/o input output communication hardware',
+    author='Álan Crístoffer',
+    author_email='acristoffers@gmail.com',
+    url='https://www.github.com/acristoffers/ahio',
+    packages=find_packages(),
+    license="MIT",
+    zip_safe=False,
+    install_requires=['pySerial', 'python-snap7'])

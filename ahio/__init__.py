@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
 """@package ahio
 ahio provides access to various I/O devices.
 
@@ -44,7 +43,7 @@ __author__ = 'Álan Crístoffer'
 __copyright__ = 'Copyright 2016, Álan Crístoffer'
 __credits__ = ['Álan Crístoffer']
 __license__ = 'MIT'
-__version__ = '1.0.10'
+__version__ = '1.0.11'
 __maintainer__ = 'Álan Crístoffer'
 __email__ = 'acristoffers@gmail.com'
 __status__ = 'Release'
