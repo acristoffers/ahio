@@ -59,8 +59,6 @@ class Driver(ahio.abstract_driver.AbstractDriver):
             self.model = G.A, G.B, G.C, G.D
             vals = scipy.linalg.eigvals(G.A)
             dt = max(0.1, float('%.1f' % (max(abs(np.real(vals))) / 5)))
-            if type(self.U) == list:
-                dt = self.T / len(self.U)
             *self.model, _ = scipy.signal.cont2discrete(self.model, dt)
 
         A, B, C, D = self.model
