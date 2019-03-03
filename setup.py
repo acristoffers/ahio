@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from codecs import open
+import codecs
 import glob
 import shutil
 from os import path
@@ -31,7 +31,7 @@ from setuptools import Command, find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
 
-with open('README.md', 'r') as f:
+with codecs.open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 
