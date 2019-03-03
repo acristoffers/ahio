@@ -21,7 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import pypandoc
 from codecs import open
 from os import path
 
@@ -29,7 +28,9 @@ import ahio
 from setuptools import find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
-long_description = pypandoc.convert_file('README.md', to='rst')
+
+with open('README.md', 'r') as f:
+    long_description = f.read()
 
 setup(
     name='ahio',
@@ -55,4 +56,4 @@ setup(
     packages=find_packages(),
     license="MIT",
     zip_safe=False,
-    install_requires=['pySerial', 'python-snap7', 'pypandoc', 'pymodbus'])
+    install_requires=['pySerial', 'python-snap7', 'pymodbus'])
