@@ -22,15 +22,43 @@
 # THE SOFTWARE.
 
 from codecs import open
+import glob
+import shutil
 from os import path
 
 import ahio
-from setuptools import find_packages, setup
+from setuptools import Command, find_packages, setup
 
 pwd = path.abspath(path.dirname(__file__))
 
 with open('README.md', 'r') as f:
     long_description = f.read()
+
+
+class CleanCommand(Command):
+    """Custom clean command to tidy up the project root."""
+    CLEAN_FILES = [
+        './build', './dist', './*.pyc', './*.tgz', './*.egg-info',
+        './**/__pycache__'
+    ]
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        cwd = path.realpath(path.curdir)
+        ps = [glob.glob(p) for p in self.CLEAN_FILES]
+        ps = [path.normpath(path.join(cwd, p)) for p in sum(ps, [])]
+        ps = [p for p in ps if p.startswith(cwd)]
+        for p in ps:
+            print('removing %s' % p)
+            shutil.rmtree(p)
+
 
 setup(
     name='ahio',
@@ -56,4 +84,5 @@ setup(
     packages=find_packages(),
     license="MIT",
     zip_safe=False,
-    install_requires=['pySerial', 'python-snap7', 'pymodbus'])
+    install_requires=['pySerial', 'python-snap7', 'pymodbus'],
+    cmdclass={'clean': CleanCommand})
