@@ -44,7 +44,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def __exit__(self, exc_type, exc_value, traceback):
         pass
 
-    def setup(self, model='([[0.5]], [[1]], [[1]], [[0]])'):
+    def setup(self, model='([[0.5]], [[1]], [[1]], [[0]], 1)'):
         self.model = [np.array(x) for x in eval(model)]
 
         if len(self.model) % 2 == 1:
