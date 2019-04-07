@@ -87,7 +87,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
         @throw RuntimeError can't connect to Arduino
         """
-        from pymodbus.client.sync import ModbusSerialClient, ModbusUdpClient, ModbusTcpClient
+        from pymodbus3.client.sync import ModbusSerialClient, ModbusUdpClient, ModbusTcpClient
         self._client = eval(configuration)
         self._client.connect()
 

@@ -84,5 +84,5 @@ setup(
     packages=find_packages(),
     license="MIT",
     zip_safe=False,
-    install_requires=['pySerial', 'python-snap7', 'pymodbus'],
+    install_requires=['pySerial', 'python-snap7', 'pymodbus3'],
     cmdclass={'clean': CleanCommand})
