@@ -30,6 +30,22 @@ except Exception:
     ahioDriverInfo.AVAILABLE = False
 
 
+def retry_on_job_pending(func):
+    def f(*args, **kargs):
+        exception = None
+        for _ in range(3):
+            try:
+                return func(*args, **kargs)
+            except Snap7Exception as e:
+                exception = e
+                if 'Job pending' not in str(exception):
+                    raise exception
+        else:
+            raise exception
+
+    return f
+
+
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
     NAME = 'snap7'
     AVAILABLE = True
@@ -182,10 +198,12 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         }[s[1]]
         return (area, dtype, start, length)
 
+    @retry_on_job_pending
     def _get_memory(self, mem):
         m = self._client.read_area(mem[0], 0, mem[2], mem[3])
         return mem[1]['get'](m)
 
+    @retry_on_job_pending
     def _set_memory(self, mem, value):
         m = self._client.read_area(mem[0], 0, mem[2], mem[3])
         mem[1]['set'](m, value)
