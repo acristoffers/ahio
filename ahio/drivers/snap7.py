@@ -36,7 +36,7 @@ def retry_on_job_pending(func):
         for _ in range(3):
             try:
                 return func(*args, **kargs)
-            except Snap7Exception as e:
+            except snap7.snap7exceptions.Snap7Exception as e:
                 exception = e
                 if 'Job pending' not in str(exception):
                     raise exception
