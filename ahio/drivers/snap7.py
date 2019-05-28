@@ -41,7 +41,8 @@ def retry_on_job_pending(func):
                 if 'Job pending' not in str(exception):
                     raise exception
         else:
-            raise exception
+            if exception:
+                raise exception
 
     return f
 
