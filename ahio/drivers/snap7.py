@@ -131,37 +131,30 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def _pin_type(self, pin):
         raise RuntimeError('Hardware does not support querying the pin type')
 
+    @retry_on_job_pending
     def _write(self, pin, value, pwm):
         if pwm:
             raise RuntimeError('Pin does not support PWM')
         if self._pin_direction(pin) == ahio.Direction.Input:
             raise RuntimeError('Can not write to Input')
-        while True:
-            try:
-                mem = self._parse_port_name(pin)
-                value = {
-                    ahio.LogicValue.High: 1,
-                    ahio.LogicValue.Low: 0
-                }.get(value, value)
-                self._set_memory(mem, value)
-                return
-            except:
-                pass
+        mem = self._parse_port_name(pin)
+        value = {
+            ahio.LogicValue.High: 1,
+            ahio.LogicValue.Low: 0
+        }.get(value, value)
+        self._set_memory(mem, value)
 
+    @retry_on_job_pending
     def _read(self, pin):
-        while True:
-            try:
-                mem = self._parse_port_name(pin)
-                value = self._get_memory(mem)
-                if mem[1] == 'X':
-                    return {
-                        0: ahio.LogicValue.Low,
-                        1: ahio.LogicValue.High
-                    }.get(value, value)
-                else:
-                    return value
-            except:
-                pass
+        mem = self._parse_port_name(pin)
+        value = self._get_memory(mem)
+        if mem[1] == 'X':
+            return {
+                0: ahio.LogicValue.Low,
+                1: ahio.LogicValue.High
+            }.get(value, value)
+        else:
+            return value
 
     def analog_references(self):
         return []
