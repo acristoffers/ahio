@@ -136,23 +136,32 @@ class Driver(ahio.abstract_driver.AbstractDriver):
             raise RuntimeError('Pin does not support PWM')
         if self._pin_direction(pin) == ahio.Direction.Input:
             raise RuntimeError('Can not write to Input')
-        mem = self._parse_port_name(pin)
-        value = {
-            ahio.LogicValue.High: 1,
-            ahio.LogicValue.Low: 0
-        }.get(value, value)
-        self._set_memory(mem, value)
+        while True:
+            try:
+                mem = self._parse_port_name(pin)
+                value = {
+                    ahio.LogicValue.High: 1,
+                    ahio.LogicValue.Low: 0
+                }.get(value, value)
+                self._set_memory(mem, value)
+                return
+            except:
+                pass
 
     def _read(self, pin):
-        mem = self._parse_port_name(pin)
-        value = self._get_memory(mem)
-        if mem[1] == 'X':
-            return {
-                0: ahio.LogicValue.Low,
-                1: ahio.LogicValue.High
-            }.get(value, value)
-        else:
-            return value
+        while True:
+            try:
+                mem = self._parse_port_name(pin)
+                value = self._get_memory(mem)
+                if mem[1] == 'X':
+                    return {
+                        0: ahio.LogicValue.Low,
+                        1: ahio.LogicValue.High
+                    }.get(value, value)
+                else:
+                    return value
+            except:
+                pass
 
     def analog_references(self):
         return []
