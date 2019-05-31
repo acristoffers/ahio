@@ -40,7 +40,7 @@ def retry_on_job_pending(func):
             except snap7.snap7exceptions.Snap7Exception as e:
                 exception = e
                 print(f'Retrying, Exception: {e}')
-                time.sleep(100)
+                time.sleep(100 / 1000)
                 if 'Job pending' not in str(exception):
                     raise exception
         else:
