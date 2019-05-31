@@ -20,9 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import ahio.abstract_driver
-
+import time
 from enum import Enum
+
+import ahio.abstract_driver
 
 try:
     import snap7
@@ -33,15 +34,18 @@ except Exception:
 def retry_on_job_pending(func):
     def f(*args, **kargs):
         exception = None
-        for _ in range(3):
+        for _ in range(10):
             try:
                 return func(*args, **kargs)
             except snap7.snap7exceptions.Snap7Exception as e:
                 exception = e
+                print(f'Retrying, Exception: {e}')
+                time.sleep(100)
                 if 'Job pending' not in str(exception):
                     raise exception
         else:
             if exception:
+                print('retry failed')
                 raise exception
 
     return f
