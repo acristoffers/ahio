@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ahio"
-version = "1.0.26"
+version = "1.0.27"
 description = "I/O Communication Library"
 authors = ["Álan Crístoffer <acristoffers@gmail.com>"]
 license = "MIT"
@@ -9,7 +9,7 @@ repository = "https://github.com/acristoffers/ahio"
 keywords = ["data acquisition", "I/O", "hardware communication"]
 
 [tool.poetry.dependencies]
-python = ">=3.7,<3.11"
+python = ">=3.8,<3.12"
 pyserial = "^3.5"
 python-snap7 = "^1.1"
 pymodbus3 = "^1.0.0"
