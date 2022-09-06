@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ahio"
-version = "1.0.27"
+version = "1.0.28"
 description = "I/O Communication Library"
 authors = ["Álan Crístoffer <acristoffers@gmail.com>"]
 license = "MIT"
