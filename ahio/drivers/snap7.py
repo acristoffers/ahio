@@ -37,7 +37,7 @@ def retry_on_job_pending(func):
         for _ in range(10):
             try:
                 return func(*args, **kargs)
-            except snap7.snap7exceptions.Snap7Exception as e:
+            except BaseException as e:
                 exception = e
                 print(f'Retrying, Exception: {e}')
                 time.sleep(100 / 1000)
