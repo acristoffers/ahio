@@ -177,10 +177,10 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def _parse_port_name(self, s):
         s = s.upper()
         area = {
-            'D': snap7.snap7types.S7AreaDB,
-            'M': snap7.snap7types.S7AreaMK,
-            'Q': snap7.snap7types.S7AreaPA,
-            'I': snap7.snap7types.S7AreaPE
+            'D': snap7.types.S7AreaDB,
+            'M': snap7.types.S7AreaMK,
+            'Q': snap7.types.S7AreaPA,
+            'I': snap7.types.S7AreaPE
         }[s[0]]
         length = {'X': 1, 'B': 1, 'W': 2, 'D': 4}[s[1]]
         start = int(s.split('.')[0][2:])
