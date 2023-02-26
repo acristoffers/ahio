@@ -49,7 +49,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
         if len(self.model) % 2 == 1:
             *self.model, dt = self.model
-            dt = np.asscalar(dt)
+            dt = float(dt)
             G = scipy.signal.dlti(*self.model, dt=dt)
             G = scipy.signal.StateSpace(G)
             self.model = G.A, G.B, G.C, G.D
@@ -110,7 +110,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         else:
             self.x = A @ self.x + B * self.u
             y = C @ self.x
-        return np.asscalar(y)
+        return float(y.item())
 
     def analog_references(self):
         return []
