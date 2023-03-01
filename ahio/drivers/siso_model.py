@@ -28,12 +28,12 @@ import scipy.signal
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'SISO Model'
+    NAME = "SISO Model"
     AVAILABLE = True
 
 
 class Driver(ahio.abstract_driver.AbstractDriver):
-    Pins = Enum('Pins', 'U, Y')
+    Pins = Enum("Pins", "U, Y")
     x = None
     u = None
     model = None
@@ -44,7 +44,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def __exit__(self, exc_type, exc_value, traceback):
         pass
 
-    def setup(self, model='([[0.5]], [[1]], [[1]], [[0]], 1)'):
+    def setup(self, model="([[0.5]], [[1]], [[1]], [[0]], 1)"):
         self.model = [np.array(x) for x in eval(model)]
 
         if len(self.model) % 2 == 1:
@@ -58,7 +58,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
             G = scipy.signal.StateSpace(G)
             self.model = G.A, G.B, G.C, G.D
             vals = scipy.linalg.eigvals(G.A)
-            dt = max(0.1, float('%.1f' % (max(abs(np.real(vals))) / 5)))
+            dt = max(0.1, float("%.1f" % (max(abs(np.real(vals))) / 5)))
             *self.model, _ = scipy.signal.cont2discrete(self.model, dt)
 
         A, B, C, D = self.model
@@ -67,19 +67,15 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def __create_pin_info(self, pid, pwm=False):
         obj = {
-            'id': pid,
-            'name': 'U' if pid.value == 1 else 'Y',
-            'analog': {
-                'input': pid.value == 2,
-                'output': pid.value == 1,
-                'read_range': (0, 100),
-                'write_range': (0, 100)
+            "id": pid,
+            "name": "U" if pid.value == 1 else "Y",
+            "analog": {
+                "input": pid.value == 2,
+                "output": pid.value == 1,
+                "read_range": (0, 100),
+                "write_range": (0, 100),
             },
-            'digital': {
-                'input': False,
-                'output': False,
-                'pwm': False
-            }
+            "digital": {"input": False, "output": False, "pwm": False},
         }
         return obj
 

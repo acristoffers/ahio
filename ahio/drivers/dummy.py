@@ -26,13 +26,13 @@ from enum import Enum
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'Dummy'
+    NAME = "Dummy"
     AVAILABLE = True
 
 
 class Driver(ahio.abstract_driver.AbstractDriver):
-    Pins = Enum('Pins', 'Input Output')
-    AnalogReferences = Enum('AnalogReferences', 'AR1 AR2')
+    Pins = Enum("Pins", "Input Output")
+    AnalogReferences = Enum("AnalogReferences", "AR1 AR2")
 
     def __enter__(self):
         return self
@@ -42,19 +42,15 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def __create_pin_info(self, pid, pwm=False):
         return {
-            'id': pid,
-            'name': 'Pin %s' % pid.value,
-            'analog': {
-                'input': True,
-                'output': True,
-                'read_range': (0, 100),
-                'write_range': (0, 100)
+            "id": pid,
+            "name": "Pin %s" % pid.value,
+            "analog": {
+                "input": True,
+                "output": True,
+                "read_range": (0, 100),
+                "write_range": (0, 100),
             },
-            'digital': {
-                'input': True,
-                'output': True,
-                'pwm': True
-            }
+            "digital": {"input": True, "output": True, "pwm": True},
         }
 
     def available_pins(self):

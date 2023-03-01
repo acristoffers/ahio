@@ -28,7 +28,7 @@ from enum import Enum
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'GenericTCPIO'
+    NAME = "GenericTCPIO"
     AVAILABLE = True
 
 
@@ -40,7 +40,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def __exit__(self, exc_type, exc_value, traceback):
         if self._socket:
-            self._socket.send(b'QUIT\n')
+            self._socket.send(b"QUIT\n")
             self._socket.close()
 
     def setup(self, address, port):
@@ -60,81 +60,81 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         port = int(port)
         self._socket = socket.socket()
         self._socket.connect((address, port))
-        self._socket.send(b'HELLO 1.0\n')
+        self._socket.send(b"HELLO 1.0\n")
         with self._socket.makefile() as f:
-            if f.readline().strip() != 'OK':
-                raise RuntimeError('Protocol not supported')
+            if f.readline().strip() != "OK":
+                raise RuntimeError("Protocol not supported")
 
     def __clamp(self, value, min, max):
         return sorted((min, value, max))[1]
 
     def available_pins(self):
-        self._socket.send(b'LISTPORTS\n')
+        self._socket.send(b"LISTPORTS\n")
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return json.loads(answer[3:])
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _set_pin_direction(self, pin, direction):
-        direction = 'INPUT' if direction == ahio.Direction.Input else 'OUTPUT'
-        command = ('SETDIRECTION %s %s\n' % (pin, direction)).encode('utf8')
+        direction = "INPUT" if direction == ahio.Direction.Input else "OUTPUT"
+        command = ("SETDIRECTION %s %s\n" % (pin, direction)).encode("utf8")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return None
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _pin_direction(self, pin):
-        command = ('DIRECTION %s\n' % pin).encode('utf8')
+        command = ("DIRECTION %s\n" % pin).encode("utf8")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             direction = answer[3:].strip()
             d = ahio.Direction
-            return d.Input if direction == 'INPUT' else d.Output
-        elif answer.startswith('ERROR'):
+            return d.Input if direction == "INPUT" else d.Output
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _set_pin_type(self, pin, ptype):
-        ptype = 'DIGITAL' if ptype == ahio.PortType.Digital else 'ANALOG'
-        command = ('SETTYPE %s %s\n' % (pin, ptype)).encode('utf8')
+        ptype = "DIGITAL" if ptype == ahio.PortType.Digital else "ANALOG"
+        command = ("SETTYPE %s %s\n" % (pin, ptype)).encode("utf8")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return None
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _pin_type(self, pin):
-        command = ('TYPE %s\n' % pin).encode('utf8')
+        command = ("TYPE %s\n" % pin).encode("utf8")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             ptype = answer[3:].strip()
             pt = ahio.PortType
-            return pt.Digital if ptype == 'DIGITAL' else pt.Analog
-        elif answer.startswith('ERROR'):
+            return pt.Digital if ptype == "DIGITAL" else pt.Analog
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _find_port_info(self, pin):
-        ps = [p for p in self.available_pins() if p['id'] == pin]
+        ps = [p for p in self.available_pins() if p["id"] == pin]
         if ps:
             return ps[0]
         else:
@@ -145,112 +145,111 @@ class Driver(ahio.abstract_driver.AbstractDriver):
             return None
         pin_info = self._find_port_info(pin)
         if self._pin_type(pin) == ahio.PortType.Digital:
-            if not pin_info['digital']['output']:
-                raise RuntimeError('Pin does not support digital output')
+            if not pin_info["digital"]["output"]:
+                raise RuntimeError("Pin does not support digital output")
             if pwm:
-                if not pin_info['digital']['pwm']:
-                    raise RuntimeError('Pin does not support PWM')
+                if not pin_info["digital"]["pwm"]:
+                    raise RuntimeError("Pin does not support PWM")
                 value = self.__clamp(value, 0, 1)
-                command = ('WRITEPWM %s %s\n' % (pin, value)).encode('utf8')
+                command = ("WRITEPWM %s %s\n" % (pin, value)).encode("utf8")
             else:
-                value = 'HIGH' if value == ahio.LogicValue.High else 'LOW'
-                command = ('WRITEDIGITAL %s %s\n' %
-                           (pin, value)).encode('utf8')
+                value = "HIGH" if value == ahio.LogicValue.High else "LOW"
+                command = ("WRITEDIGITAL %s %s\n" % (pin, value)).encode("utf8")
         else:
-            if not pin_info['analog']['output']:
-                raise RuntimeError('Pin does not support analog output')
-            l = pin_info['analog']['write_range']
+            if not pin_info["analog"]["output"]:
+                raise RuntimeError("Pin does not support analog output")
+            l = pin_info["analog"]["write_range"]
             value = self.__clamp(value, l[0], l[1])
-            command = ('WRITEANALOG %s %s\n' % (pin, value)).encode('utf8')
+            command = ("WRITEANALOG %s %s\n" % (pin, value)).encode("utf8")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return None
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _read(self, pin):
         pin_info = self._find_port_info(pin)
         pin_type = self._pin_type(pin)
-        if pin_info['digital']['input'] and pin_type == ahio.PortType.Digital:
+        if pin_info["digital"]["input"] and pin_type == ahio.PortType.Digital:
             da = ahio.PortType.Digital
-            command = ('READDIGITAL %s\n' % pin).encode('utf8')
-        elif pin_info['analog']['input'] and pin_type == ahio.PortType.Analog:
+            command = ("READDIGITAL %s\n" % pin).encode("utf8")
+        elif pin_info["analog"]["input"] and pin_type == ahio.PortType.Analog:
             da = ahio.PortType.Analog
-            command = ('READANALOG %s\n' % pin).encode('utf8')
+            command = ("READANALOG %s\n" % pin).encode("utf8")
         else:
-            raise RuntimeError('Pin does not support input or is not set up')
+            raise RuntimeError("Pin does not support input or is not set up")
         self._socket.send(command)
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             value = answer[3:].strip()
             if da == ahio.PortType.Digital:
                 lv = ahio.LogicValue
-                return lv.High if value == 'HIGH' else lv.Low
+                return lv.High if value == "HIGH" else lv.Low
             else:
                 return int(value)
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def analog_references(self):
-        self._socket.send(b'ANALOGREFERENCES\n')
+        self._socket.send(b"ANALOGREFERENCES\n")
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
-            __, *opts = answer.strip().split(' ')
+        if answer.startswith("OK"):
+            __, *opts = answer.strip().split(" ")
             return opts
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _set_analog_reference(self, reference, pin):
         if pin:
-            command = ('SETANALOGREFERENCE %s %s\n' % (reference, pin))
+            command = "SETANALOGREFERENCE %s %s\n" % (reference, pin)
         else:
-            command = ('SETANALOGREFERENCE %s\n' % reference)
-        self._socket.send(command.encode('utf8'))
+            command = "SETANALOGREFERENCE %s\n" % reference
+        self._socket.send(command.encode("utf8"))
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _analog_reference(self, pin):
         if pin:
-            command = 'ANALOGREFERENCE %s\n' % pin
+            command = "ANALOGREFERENCE %s\n" % pin
         else:
-            command = 'ANALOGREFERENCE\n'
-        self._socket.send(command.encode('utf8'))
+            command = "ANALOGREFERENCE\n"
+        self._socket.send(command.encode("utf8"))
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
-            return answer.strip().split(' ')[1]
-        elif answer.startswith('ERROR'):
+        if answer.startswith("OK"):
+            return answer.strip().split(" ")[1]
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")
 
     def _set_pwm_frequency(self, frequency, pin):
         if pin:
-            command = 'SETPWMFREQUENCY %s %s\n' % (frequency, pin)
+            command = "SETPWMFREQUENCY %s %s\n" % (frequency, pin)
         else:
-            command = 'SETPWMFREQUENCY %s\n' % frequency
-        self._socket.send(command.encode('utf8'))
+            command = "SETPWMFREQUENCY %s\n" % frequency
+        self._socket.send(command.encode("utf8"))
         with self._socket.makefile() as f:
             answer = f.readline()
-        if answer.startswith('OK'):
+        if answer.startswith("OK"):
             return
-        elif answer.startswith('ERROR'):
+        elif answer.startswith("ERROR"):
             raise RuntimeError(answer[6:])
         else:
-            raise RuntimeError('Unknown response')
+            raise RuntimeError("Unknown response")

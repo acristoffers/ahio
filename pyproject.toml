@@ -2,7 +2,7 @@
 name = "ahio"
 version = "1.0.31"
 description = "I/O Communication Library"
-authors = ["Álan Crístoffer <acristoffers@gmail.com>"]
+authors = ["Álan Crístoffer <acristoffers@startmail.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/acristoffers/ahio"

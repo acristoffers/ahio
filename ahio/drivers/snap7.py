@@ -39,20 +39,20 @@ def retry_on_job_pending(func):
                 return func(*args, **kargs)
             except BaseException as e:
                 exception = e
-                print(f'Retrying, Exception: {e}')
+                print(f"Retrying, Exception: {e}")
                 time.sleep(100 / 1000)
-                if 'Job pending' not in str(exception):
+                if "Job pending" not in str(exception):
                     raise exception
         else:
             if exception:
-                print('retry failed')
+                print("retry failed")
                 raise exception
 
     return f
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'snap7'
+    NAME = "snap7"
     AVAILABLE = True
 
 
@@ -120,44 +120,38 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def _set_pin_direction(self, pin, direction):
         d = self._pin_direction(pin)
         if direction != d and not (type(d) is list and direction in d):
-            raise RuntimeError('Port %s does not support this Direction' % pin)
+            raise RuntimeError("Port %s does not support this Direction" % pin)
 
     def _pin_direction(self, pin):
         return {
-            'D': [ahio.Direction.Input, ahio.Direction.Output],
-            'M': [ahio.Direction.Input, ahio.Direction.Output],
-            'Q': ahio.Direction.Output,
-            'I': ahio.Direction.Input
+            "D": [ahio.Direction.Input, ahio.Direction.Output],
+            "M": [ahio.Direction.Input, ahio.Direction.Output],
+            "Q": ahio.Direction.Output,
+            "I": ahio.Direction.Input,
         }[pin[0].upper()]
 
     def _set_pin_type(self, pin, ptype):
-        raise RuntimeError('Hardware does not support changing the pin type')
+        raise RuntimeError("Hardware does not support changing the pin type")
 
     def _pin_type(self, pin):
-        raise RuntimeError('Hardware does not support querying the pin type')
+        raise RuntimeError("Hardware does not support querying the pin type")
 
     @retry_on_job_pending
     def _write(self, pin, value, pwm):
         if pwm:
-            raise RuntimeError('Pin does not support PWM')
+            raise RuntimeError("Pin does not support PWM")
         if self._pin_direction(pin) == ahio.Direction.Input:
-            raise RuntimeError('Can not write to Input')
+            raise RuntimeError("Can not write to Input")
         mem = self._parse_port_name(pin)
-        value = {
-            ahio.LogicValue.High: 1,
-            ahio.LogicValue.Low: 0
-        }.get(value, value)
+        value = {ahio.LogicValue.High: 1, ahio.LogicValue.Low: 0}.get(value, value)
         self._set_memory(mem, value)
 
     @retry_on_job_pending
     def _read(self, pin):
         mem = self._parse_port_name(pin)
         value = self._get_memory(mem)
-        if mem[1] == 'X':
-            return {
-                0: ahio.LogicValue.Low,
-                1: ahio.LogicValue.High
-            }.get(value, value)
+        if mem[1] == "X":
+            return {0: ahio.LogicValue.Low, 1: ahio.LogicValue.High}.get(value, value)
         else:
             return value
 
@@ -165,54 +159,52 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         return []
 
     def _set_analog_reference(self, reference, pin):
-        raise RuntimeError('Hardware does not support setting analog ref')
+        raise RuntimeError("Hardware does not support setting analog ref")
 
     def _analog_reference(self, pin):
         pass
 
     def _set_pwm_frequency(self, frequency, pin):
-        raise RuntimeError(
-            'Setting PWM frequency is not supported by hardware')
+        raise RuntimeError("Setting PWM frequency is not supported by hardware")
 
     def _parse_port_name(self, s):
         s = s.upper()
         area = {
-            'D': snap7.types.Areas.DB,
-            'M': snap7.types.Areas.MK,
-            'Q': snap7.types.Areas.PA,
-            'I': snap7.types.Areas.PE
+            "D": snap7.types.Areas.DB,
+            "M": snap7.types.Areas.MK,
+            "Q": snap7.types.Areas.PA,
+            "I": snap7.types.Areas.PE,
         }[s[0]]
-        length = {'X': 1, 'B': 1, 'W': 2, 'D': 4}[s[1]]
-        start = int(s.split('.')[0][2:])
-        bit = int(s.split('.')[1]) if s[1] == 'X' else None
+        length = {"X": 1, "B": 1, "W": 2, "D": 4}[s[1]]
+        start = int(s.split(".")[0][2:])
+        bit = int(s.split(".")[1]) if s[1] == "X" else None
         dtype = {
-            'X': {
-                'get': lambda m: snap7.util.get_bool(m, 0, bit),
-                'set': lambda m, v: snap7.util.set_bool(m, 0, bit, v)
+            "X": {
+                "get": lambda m: snap7.util.get_bool(m, 0, bit),
+                "set": lambda m, v: snap7.util.set_bool(m, 0, bit, v),
             },
-            'B': {
-                'get': lambda m: snap7.util.get_int(m, 0),
-                'set': lambda m, v: snap7.util.set_int(m, 0, v)
+            "B": {
+                "get": lambda m: snap7.util.get_int(m, 0),
+                "set": lambda m, v: snap7.util.set_int(m, 0, v),
             },
-            'W': {
-                'get': lambda m: snap7.util.get_int(m, 0),
-                'set': lambda m, v: snap7.util.set_int(m, 0, v)
+            "W": {
+                "get": lambda m: snap7.util.get_int(m, 0),
+                "set": lambda m, v: snap7.util.set_int(m, 0, v),
             },
-            'D': {
-                'get': lambda m: snap7.util.get_dword(m, 0),
-                'set': lambda m, v: snap7.util.set_dword(m, 0, v)
-            }
+            "D": {
+                "get": lambda m: snap7.util.get_dword(m, 0),
+                "set": lambda m, v: snap7.util.set_dword(m, 0, v),
+            },
         }[s[1]]
         return (area, dtype, start, length)
 
     @retry_on_job_pending
     def _get_memory(self, mem):
         m = self._client.read_area(mem[0], 0, mem[2], mem[3])
-        return mem[1]['get'](m)
+        return mem[1]["get"](m)
 
     @retry_on_job_pending
     def _set_memory(self, mem, value):
         m = self._client.read_area(mem[0], 0, mem[2], mem[3])
-        mem[1]['set'](m, value)
+        mem[1]["set"](m, value)
         self._client.write_area(mem[0], 0, mem[2], m)
-

@@ -34,27 +34,28 @@ def pi_version():
     Raspberry Pi 2 (model B+), or not a Raspberry Pi.
     https://github.com/adafruit/Adafruit_Python_GPIO/blob/master/Adafruit_GPIO/Platform.py
     """
-    if not os.path.isfile('/proc/cpuinfo'):
+    if not os.path.isfile("/proc/cpuinfo"):
         return None
     # Check /proc/cpuinfo for the Hardware field value.
     # 2708 is pi 1
     # 2709 is pi 2
     # Anything else is not a pi.
-    with open('/proc/cpuinfo', 'r') as infile:
+    with open("/proc/cpuinfo", "r") as infile:
         cpuinfo = infile.read()
     # Match a line like 'Hardware   : BCM2709'
-    match = re.search('^Hardware\s+:\s+(\w+)$', cpuinfo,
-                      flags=re.MULTILINE | re.IGNORECASE)
+    match = re.search(
+        "^Hardware\s+:\s+(\w+)$", cpuinfo, flags=re.MULTILINE | re.IGNORECASE
+    )
     if not match:
         # Couldn't find the hardware, assume it isn't a pi.
         return None
-    if match.group(1) == 'BCM2708':
+    if match.group(1) == "BCM2708":
         # Pi 1
         return 1
-    elif match.group(1) == 'BCM2709':
+    elif match.group(1) == "BCM2709":
         # Pi 2
         return 2
-    elif match.group(1) == 'BCM2835':
+    elif match.group(1) == "BCM2835":
         # Pi 3
         return 3
     else:
@@ -63,7 +64,7 @@ def pi_version():
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'Raspberry'
+    NAME = "Raspberry"
     AVAILABLE = pi_version() is not None
 
 
@@ -82,9 +83,7 @@ except RuntimeError:
 
 class Driver(ahio.abstract_driver.AbstractDriver):
 
-    Pins = Enum(
-        'Pins',
-        'D3 D5 D7 D8 D10 D12 D13 D15 D16 D18 D19 D21 D22 D23 D24 D26')
+    Pins = Enum("Pins", "D3 D5 D7 D8 D10 D12 D13 D15 D16 D18 D19 D21 D22 D23 D24 D26")
 
     __pwm = {}
     __pwm_frequency = {}
@@ -103,26 +102,22 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def __create_pin_info(self, pid):
         return {
-            'id': pid,
-            'name': 'Digital %s' % self.__pin_to_int(pid),
-            'analog': {
-                'input': False,
-                'output': False,
-                'read_range': None,
-                'write_range': None
+            "id": pid,
+            "name": "Digital %s" % self.__pin_to_int(pid),
+            "analog": {
+                "input": False,
+                "output": False,
+                "read_range": None,
+                "write_range": None,
             },
-            'digital': {
-                'input': True,
-                'output': True,
-                'pwm': True
-            }
+            "digital": {"input": True, "output": True, "pwm": True},
         }
 
     def __pin_to_int(self, pin):
         if type(pin) is int:
             return pin
         else:
-            return int(pin.name.replace('D', ''))
+            return int(pin.name.replace("D", ""))
 
     def __clamp(self, value, min, max):
         return sorted((min, value, max))[1]
@@ -152,7 +147,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def _set_pin_type(self, pin, ptype):
         if ptype != ahio.PortType.Digital:
-            raise RuntimeError('Raspberry Pi pins can only be used as Digital')
+            raise RuntimeError("Raspberry Pi pins can only be used as Digital")
 
     def _pin_type(self, pin):
         return ahio.PortType.Digital
@@ -172,15 +167,14 @@ class Driver(ahio.abstract_driver.AbstractDriver):
                     p = GPIO.PWM(pin, freq)
                 p.start(value)
             else:
-                raise TypeError(
-                    'Value should be a float or int between 0 and 1')
+                raise TypeError("Value should be a float or int between 0 and 1")
         else:
             if type(value) is ahio.LogicValue:
                 lv = ahio.LogicValue
                 value = GPIO.HIGH if value == lv.High else GPIO.LOW
                 GPIO.output(pin, value)
             else:
-                raise TypeError('Value should be of type ahio.LogicValue')
+                raise TypeError("Value should be of type ahio.LogicValue")
 
     def _read(self, pin):
         pin = self.__pin_to_int(pin)
@@ -190,10 +184,10 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         return []
 
     def _set_analog_reference(self, reference, pin):
-        raise RuntimeError('Raspberry Pi does not have analog pins')
+        raise RuntimeError("Raspberry Pi does not have analog pins")
 
     def _analog_reference(self, pin):
-        raise RuntimeError('Raspberry Pi does not have analog pins')
+        raise RuntimeError("Raspberry Pi does not have analog pins")
 
     def _set_pwm_frequency(self, frequency, pin):
         if pin:

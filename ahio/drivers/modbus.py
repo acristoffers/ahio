@@ -24,7 +24,7 @@ import ahio.abstract_driver
 
 
 class ahioDriverInfo(ahio.abstract_driver.AbstractahioDriverInfo):
-    NAME = 'Modbus'
+    NAME = "Modbus"
     AVAILABLE = True
 
 
@@ -43,14 +43,14 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         pass
 
     def setup(
-            self,
-            configuration="ModbusSerialClient(method='rtu',port='/dev/cu.usbmodem14101',baudrate=9600)"
+        self,
+        configuration="ModbusSerialClient(method='rtu',port='/dev/cu.usbmodem14101',baudrate=9600)",
     ):
         """Start a Modbus server.
 
         The following classes are available with their respective named
         parameters:
-        
+
         ModbusTcpClient
             host: The host to connect to (default 127.0.0.1)
             port: The modbus port to connect to (default 502)
@@ -73,7 +73,7 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
         When configuring the ports, the following convention should be
         respected:
-        
+
         portname: C1:13 -> Coil on device 1, address 13
 
         The letters can be:
@@ -87,7 +87,12 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
         @throw RuntimeError can't connect to Arduino
         """
-        from pymodbus3.client.sync import ModbusSerialClient, ModbusUdpClient, ModbusTcpClient
+        from pymodbus3.client.sync import (
+            ModbusSerialClient,
+            ModbusUdpClient,
+            ModbusTcpClient,
+        )
+
         self._client = eval(configuration)
         self._client.connect()
 
@@ -108,23 +113,23 @@ class Driver(ahio.abstract_driver.AbstractDriver):
 
     def _write(self, pin, value, pwm):
         ptype = pin[0].upper()
-        unit, address = [int(i) for i in pin[1:].split(':')]
-        func = self._client.write_register if ptype == 'R' else self._client.write_coil
+        unit, address = [int(i) for i in pin[1:].split(":")]
+        func = self._client.write_register if ptype == "R" else self._client.write_coil
         func(address, value, unit=unit)
 
     def _read(self, pin):
         ptype = pin[0].upper()
-        unit, address = [int(i) for i in pin[1:].split(':')]
+        unit, address = [int(i) for i in pin[1:].split(":")]
         func = {
-            'C': self._client.read_coils,
-            'I': self._client.read_discrete_inputs,
-            'R': self._client.read_input_registers,
-            'H': self._client.read_holding_registers
+            "C": self._client.read_coils,
+            "I": self._client.read_discrete_inputs,
+            "R": self._client.read_input_registers,
+            "H": self._client.read_holding_registers,
         }[ptype]
         ret = func(address, unit=unit)
-        if hasattr(ret, 'bits'):
+        if hasattr(ret, "bits"):
             return int(ret.bits[0])
-        elif hasattr(ret, 'registers'):
+        elif hasattr(ret, "registers"):
             return float(ret.registers[0])
         else:
             return 0

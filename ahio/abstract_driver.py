@@ -34,8 +34,9 @@ class AbstractahioDriverInfo(object):
     contains information regarding the driver, as it's name and availability,
     for example.
     """
-    NAME = 'Driver name'
-    AVAILABLE = 'True if the driver is available, false otherwise'
+
+    NAME = "Driver name"
+    AVAILABLE = "True if the driver is available, false otherwise"
 
 
 class AbstractDriver(object):
@@ -127,12 +128,7 @@ class AbstractDriver(object):
     def _linear_interpolation(self, x, imin, imax, omin, omax):
         return (imax * omin - imin * omax + x * (omax - omin)) / (imax - imin)
 
-    def set_pin_interpolation(self,
-                              pin,
-                              read_min,
-                              read_max,
-                              write_min,
-                              write_max):
+    def set_pin_interpolation(self, pin, read_min, read_max, write_min, write_max):
         """Interpolates input and output values for `pin`.
 
         Changes the output and input of `AbstractDriver.read` and
@@ -162,22 +158,22 @@ class AbstractDriver(object):
                 self.set_pin_interpolation(p, *args)
             return
 
-        valid_read = (read_min is not None and read_max is not None)
-        valid_write = (write_min is not None and write_max is not None)
+        valid_read = read_min is not None and read_max is not None
+        valid_write = write_min is not None and write_max is not None
 
         if not valid_read and not valid_write:
             self._pin_lin.pop(pin, None)
             return
 
         pin_id = self._pin_mapping.get(pin, None)
-        pins = [pin for pin in self.available_pins() if pin_id == pin['id']]
-        read = pins[0]['analog']['read_range']
-        write = pins[0]['analog']['write_range']
+        pins = [pin for pin in self.available_pins() if pin_id == pin["id"]]
+        read = pins[0]["analog"]["read_range"]
+        write = pins[0]["analog"]["write_range"]
         valid_read = valid_read and read
         valid_write = valid_write and write
         self._pin_lin[pin] = {
-            'read': (*read, read_min, read_max) if valid_read else None,
-            'write': (write_min, write_max, *write) if valid_write else None
+            "read": (*read, read_min, read_max) if valid_read else None,
+            "write": (write_min, write_max, *write) if valid_write else None,
         }
 
     def set_pin_direction(self, pin, direction):
@@ -206,7 +202,7 @@ class AbstractDriver(object):
         if pin_id and type(direction) is ahio.Direction:
             self._set_pin_direction(pin_id, direction)
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def pin_direction(self, pin):
         """Gets the `ahio.Direction` this pin was set to.
@@ -225,7 +221,7 @@ class AbstractDriver(object):
         if pin_id:
             return self._pin_direction(pin_id)
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def set_pin_type(self, pin, ptype):
         """Sets pin `pin` to `type`.
@@ -251,11 +247,11 @@ class AbstractDriver(object):
 
         pin_id = self._pin_mapping.get(pin, None)
         if type(ptype) is not ahio.PortType:
-            raise KeyError('ptype must be of type ahio.PortType')
+            raise KeyError("ptype must be of type ahio.PortType")
         elif pin_id:
             self._set_pin_type(pin_id, ptype)
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def pin_type(self, pin):
         """Gets the `ahio.PortType` this pin was set to.
@@ -274,7 +270,7 @@ class AbstractDriver(object):
         if pin_id:
             return self._pin_type(pin_id)
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def write(self, pin, value, pwm=False):
         """Sets the output to the given value.
@@ -307,17 +303,17 @@ class AbstractDriver(object):
             return
 
         if pwm and type(value) is not int and type(value) is not float:
-            raise TypeError('pwm is set, but value is not a float or int')
+            raise TypeError("pwm is set, but value is not a float or int")
 
         pin_id = self._pin_mapping.get(pin, None)
         if pin_id:
             lpin = self._pin_lin.get(pin, None)
-            if lpin and type(lpin['write']) is tuple:
-                write_range = lpin['write']
+            if lpin and type(lpin["write"]) is tuple:
+                write_range = lpin["write"]
                 value = self._linear_interpolation(value, *write_range)
             self._write(pin_id, value, pwm)
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def read(self, pin):
         """Reads value from pin `pin`.
@@ -340,12 +336,12 @@ class AbstractDriver(object):
         if pin_id:
             value = self._read(pin_id)
             lpin = self._pin_lin.get(pin, None)
-            if lpin and type(lpin['read']) is tuple:
-                read_range = lpin['read']
+            if lpin and type(lpin["read"]) is tuple:
+                read_range = lpin["read"]
                 value = self._linear_interpolation(value, *read_range)
             return value
         else:
-            raise KeyError('Requested pin is not mapped: %s' % pin)
+            raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def analog_references(self):
         """Possible values for analog reference.
@@ -385,7 +381,7 @@ class AbstractDriver(object):
             if pin_id:
                 self._set_analog_reference(reference, pin_id)
             else:
-                raise KeyError('Requested pin is not mapped: %s' % pin)
+                raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def analog_reference(self, pin=None):
         """Returns the analog reference.
@@ -413,7 +409,7 @@ class AbstractDriver(object):
             if pin_id:
                 return self._analog_reference(pin_id)
             else:
-                raise KeyError('Requested pin is not mapped: %s' % pin)
+                raise KeyError("Requested pin is not mapped: %s" % pin)
 
     def set_pwm_frequency(self, frequency, pin=None):
         """Sets PWM frequency, if supported by hardware
@@ -441,4 +437,4 @@ class AbstractDriver(object):
             if pin_id:
                 self._set_pwm_frequency(frequency, pin_id)
             else:
-                raise KeyError('Requested pin is not mapped: %s' % pin)
+                raise KeyError("Requested pin is not mapped: %s" % pin)
