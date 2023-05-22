@@ -36,8 +36,8 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     _serial = None
 
     Pins = Enum(
-        "Pins", "D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 A0 A1 A2 A3 A4 A5"
-    )
+        "Pins",
+        "D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 A0 A1 A2 A3 A4 A5")
 
     AnalogReferences = Enum("AnalogReferences", "Default Internal External")
 
@@ -98,13 +98,11 @@ class Driver(ahio.abstract_driver.AbstractDriver):
     def available_pins(self):
         pins = [p for p in Driver.Pins]
         pwms = [
-            self.__create_pin_info(pin, True)
-            for pin in pins
+            self.__create_pin_info(pin, True) for pin in pins
             if (pin.value - 1) in [3, 5, 6, 9, 10, 11]
         ]
         pins = [
-            self.__create_pin_info(pin)
-            for pin in pins
+            self.__create_pin_info(pin) for pin in pins
             if (pin.value - 1) not in [3, 5, 6, 9, 10, 11]
         ]
         return sorted(pwms + pins, key=lambda pin: pin["id"].value)
@@ -113,10 +111,13 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         if pin.name.startswith("A") and direction == ahio.Direction.Output:
             raise RuntimeError("Analog pins can only be used as Input")
         if direction == ahio.Direction.Input:
-            self._serial.write(b"\x02\xC3" + bytes({pin.value - 1}) + bytes({1}))
+            self._serial.write(b"\x02\xC3" + bytes({pin.value - 1}) +
+                               bytes({1}))
         else:
-            self._serial.write(b"\x02\xC3" + bytes({pin.value - 1}) + bytes({0}))
-            self._serial.write(b"\x02\xC7" + bytes({pin.value - 1}) + bytes({0}))
+            self._serial.write(b"\x02\xC3" + bytes({pin.value - 1}) +
+                               bytes({0}))
+            self._serial.write(b"\x02\xC7" + bytes({pin.value - 1}) +
+                               bytes({0}))
 
     def _pin_direction(self, pin):
         self._serial.write(b"\x02\xC4" + bytes({pin.value - 1}))
@@ -154,13 +155,17 @@ class Driver(ahio.abstract_driver.AbstractDriver):
                 else:
                     raise TypeError("value not a float or int between 0 and 1")
             else:
-                if type(value) is ahio.LogicValue:
-                    value = 1 if value == ahio.LogicValue.High else 0
+                if type(value) in [ahio.LogicValue, int, float]:
+                    value = {
+                        0: 0,
+                        0.0: 0,
+                        ahio.LogicValue.Low: 0
+                    }.get(value, 1)
                     command = b"\x02\xC7" + bytes({pin.value - 1})
                     arg = bytes({value})
                     self._serial.write(command + arg)
                 else:
-                    raise TypeError("Value should be of type ahio.LogicValue")
+                    raise TypeError("Value should be of type ahio.LogicValue, int or float")
         else:
             raise RuntimeError("Can not write to analog pin")
 
@@ -194,4 +199,5 @@ class Driver(ahio.abstract_driver.AbstractDriver):
         ][reference]
 
     def _set_pwm_frequency(self, frequency, pin):
-        raise RuntimeError("Setting PWM frequency is not supported by hardware")
+        raise RuntimeError(
+            "Setting PWM frequency is not supported by hardware")
