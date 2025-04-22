@@ -60,7 +60,7 @@ class AbstractDriver(object):
 
         Returns a list of dictionaries indicating the available pins and it's
         capabilities. It should follow this format:
-        \verbatim
+        \\verbatim
         [ {
             'id': 1, # some value that represents this pin in your
                      # implementation.
@@ -81,7 +81,7 @@ class AbstractDriver(object):
                 'pwm': True # if pwm generation is available
             }
         }]
-        \endverbatim
+        \\endverbatim
 
         If you're developing a driver, you should override this function.
 
