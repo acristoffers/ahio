@@ -1,6 +1,6 @@
 [project]
 name = "ahio"
-version = "1.0.34"
+version = "1.0.35"
 description = "I/O Communication Library"
 authors = [{ name = "Álan Crístoffer", email = "acristoffers@startmail.com" }]
 requires-python = ">=3.8,<3.15"

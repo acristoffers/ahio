@@ -9,7 +9,7 @@ resolution-markers = [
 
 [[package]]
 name = "ahio"
-version = "1.0.34"
+version = "1.0.35"
 source = { editable = "." }
 dependencies = [
     { name = "pymodbus", version = "3.6.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
