@@ -15,7 +15,7 @@
           name = "ahio";
           src = ./.;
           propagatedBuildInputs = with pythonPkgs; [
-            poetry-core
+            hatchling
             pymodbus
             pyserial
             python-snap7

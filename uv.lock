@@ -1,0 +1,105 @@
+version = 1
+revision = 2
+requires-python = ">=3.8, <3.15"
+resolution-markers = [
+    "python_full_version >= '3.10'",
+    "python_full_version == '3.9.*'",
+    "python_full_version < '3.9'",
+]
+
+[[package]]
+name = "ahio"
+version = "1.0.34"
+source = { editable = "." }
+dependencies = [
+    { name = "pymodbus", version = "3.6.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "pymodbus", version = "3.8.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
+    { name = "pymodbus", version = "3.9.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "pyserial" },
+    { name = "python-snap7", version = "1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "python-snap7", version = "1.4.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pymodbus", specifier = ">=3.0.0,<4" },
+    { name = "pyserial", specifier = "~=3.5" },
+    { name = "python-snap7", specifier = "~=1.3" },
+]
+
+[[package]]
+name = "pymodbus"
+version = "3.6.9"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.9'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b4/a4/5322c8e3be3bb2db7ab3eb7c2160fd2ec325083d7e60a76cd9cc896dd7bd/pymodbus-3.6.9.tar.gz", hash = "sha256:f4223b72c20cd00a2cf25f6ddb31ecb2c0587309111a55283b2f4a1ac115e4cc", size = 193922, upload_time = "2024-06-27T10:24:31.267Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a2/1e/579762ad921bb7c0dd5108ae00cedd07b7baa150083d210bcd2b1aeb4262/pymodbus-3.6.9-py3-none-any.whl", hash = "sha256:91dea79f157ca2d26c137190de76dce5a6c99c0ea514d2d1bf3980acbbdaf29c", size = 186547, upload_time = "2024-06-27T10:24:29.018Z" },
+]
+
+[[package]]
+name = "pymodbus"
+version = "3.8.6"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version == '3.9.*'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/47/3a/a6958507d6f9c0c50f11cd299b056161c10f3cef7c227b44bc183a7e7854/pymodbus-3.8.6.tar.gz", hash = "sha256:7689b56cc3ad05a594e1486e772abb9d9646c01737935df492db04455680baf6", size = 162341, upload_time = "2025-02-10T11:53:24.596Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/23/8f30f094b4a00428bd3c28dd3b6a2b3715164ab85520673e197bd4bba2e7/pymodbus-3.8.6-py3-none-any.whl", hash = "sha256:b82373295fb98c9a9bf9338235240a8b2e97bcc49c0d833168cade7ba2fa90e6", size = 164366, upload_time = "2025-02-10T11:53:22.384Z" },
+]
+
+[[package]]
+name = "pymodbus"
+version = "3.9.2"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.10'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9e/9f/434efbc3edd1445efca2c17d24877010746d65783ddbb937de753de6bec7/pymodbus-3.9.2.tar.gz", hash = "sha256:2d08ab7bf6d1abc55a87f4faa3a7b04f74d7310b8c9771c3d66ee5fccf2e25ac", size = 163040, upload_time = "2025-04-18T15:24:36.377Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/7e/ae151f2750fb604247088774634fea321a178fb898cf8e961879825f9e41/pymodbus-3.9.2-py3-none-any.whl", hash = "sha256:292dcf859d6f232c30abc9753c1f0b7804771fd9c749641b32831de01b360b30", size = 165153, upload_time = "2025-04-18T15:24:34.428Z" },
+]
+
+[[package]]
+name = "pyserial"
+version = "3.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/7d/ae3f0a63f41e4d2f6cb66a5b57197850f919f59e558159a4dd3a818f5082/pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb", size = 159125, upload_time = "2020-11-23T03:59:15.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0", size = 90585, upload_time = "2020-11-23T03:59:13.41Z" },
+]
+
+[[package]]
+name = "python-snap7"
+version = "1.3"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.9'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5a/20/b52b5bf781627857799dbed8173ee67b39d52ace36a35d34b898c03eed9e/python-snap7-1.3.tar.gz", hash = "sha256:fc2dada8e157a6e8f5e02b7a702f3103ec1d99ad2f06b69748a2c40405b3e229", size = 50550, upload_time = "2023-01-17T07:15:23.627Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bb/17/fda4d483902194f951d895fc717d0b0e46adc88e2f2ad304b114d2c0bdc6/python_snap7-1.3-py3-none-macosx_10_9_universal2.whl", hash = "sha256:c33ab26d7617ed527eaebdaf098f6947e70bb9338ada532db28397837a631831", size = 193828, upload_time = "2023-01-17T07:15:15.026Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/f4/086baccf2e71af96011a7a534ee3de52394f2b64e3d56f97de51cda08ce2/python_snap7-1.3-py3-none-manylinux1_x86_64.whl", hash = "sha256:441d162f9dc08ab6790f1bd4e1940ca2fe8c0d9bdd7dda0ba4a4e7738dab82c8", size = 137952, upload_time = "2023-01-17T07:15:17.171Z" },
+    { url = "https://files.pythonhosted.org/packages/ea/14/6dda70653bcfd91010cccf5488f80c0fe9551baf8c549f5aab1eef1eb945/python_snap7-1.3-py3-none-manylinux2014_aarch64.whl", hash = "sha256:f8bb72cf387b1af8e1e1b4bbbabf086ca7694c6024129c7a52054e3913f40ad6", size = 342789, upload_time = "2023-01-17T07:15:19.359Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/ac/62da014a72e2fc5fe32f80f5519ad1c3686256c4ac9b89c747406af12474/python_snap7-1.3-py3-none-manylinux_2_24_armv7l.whl", hash = "sha256:5a7aaff9caceee34cfc3d0867d734990693430c353d56de08f7baaa05e7d0265", size = 293929, upload_time = "2023-10-05T11:59:24.961Z" },
+    { url = "https://files.pythonhosted.org/packages/8a/be/552aac02b7aaaa5932acc402ba1375720050194de8ccbd1df3a5c00f3fba/python_snap7-1.3-py3-none-win_amd64.whl", hash = "sha256:6eba58676033204e36e3ff957e3823c3076a20544f501a731b2ba62d96139cc6", size = 150274, upload_time = "2023-01-17T07:15:21.715Z" },
+]
+
+[[package]]
+name = "python-snap7"
+version = "1.4.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.10'",
+    "python_full_version == '3.9.*'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9c/c0/c5411a76c2db0093606e078f1966f005c443546c5b51d917e88a077ab9c4/python_snap7-1.4.1.tar.gz", hash = "sha256:c259d64c0b04d211c38e2856e1eb849225d75716d742cd6431948955c6f32515", size = 51914, upload_time = "2024-05-10T13:54:15.765Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/72/dc3641464a965ac5370174009bc39a059e166495d3b324705033975a2937/python_snap7-1.4.1-py3-none-macosx_10_9_universal2.whl", hash = "sha256:45a99c6e8012181f388b6ab22a40a374c4f206b24f95460d0e513c284b214439", size = 194508, upload_time = "2024-05-10T13:54:05.799Z" },
+    { url = "https://files.pythonhosted.org/packages/bb/17/9507ee51bb22733d5d93c5f2ca5be6bb6c1fb60e1c663079574dcca2b319/python_snap7-1.4.1-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:2ee3dd12834d19b4d76213c3bc60598846c43fcf548a8282b712d45ec745b918", size = 347764, upload_time = "2024-05-10T13:54:09.441Z" },
+    { url = "https://files.pythonhosted.org/packages/01/da/87d29dd7f9bf1fa67c6ea8afa842ff7dfd0f5849249dbb7683b544fdd8bd/python_snap7-1.4.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:00e4858f3ba9b36e676f3a52afc48bd7bfc71641b202450b9c17acc63a21a07e", size = 143347, upload_time = "2024-05-10T13:54:11.247Z" },
+    { url = "https://files.pythonhosted.org/packages/98/f7/da957862b863cebfbf1ba2552316555b88c4bee346054dcdc0d9e82d819e/python_snap7-1.4.1-py3-none-win_amd64.whl", hash = "sha256:d8a5643eac7ff7d5611a4816c27be79f2453e2e00575dbef8bbabf8b6dcf2c45", size = 153582, upload_time = "2024-05-10T13:54:13.991Z" },
+]
